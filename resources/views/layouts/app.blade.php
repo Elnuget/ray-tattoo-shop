@@ -16,9 +16,9 @@
     </head>
     <body class="font-sans antialiased">
         <!-- Background with gradient and pattern -->
-        <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 relative overflow-hidden">
+        <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-red-900 relative overflow-hidden">
             <!-- Background pattern -->
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23DC2626" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
             
             <!-- Content -->
             <div class="relative z-10">
@@ -26,7 +26,7 @@
 
                 <!-- Page Heading -->
                 @isset($header)
-                    <header class="bg-white/5 backdrop-blur-md shadow-lg border-b border-white/10">
+                    <header class="bg-black/20 backdrop-blur-md shadow-lg border-b border-red-500/20">
                         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                             {{ $header }}
                         </div>
