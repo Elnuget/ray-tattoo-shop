@@ -54,6 +54,20 @@ body {
    
 }
 
+.btn-login {
+    background-color: rgb(36, 36, 28) !important;
+    color: rgb(245, 245, 245) !important;
+    border: 2px solid rgb(36, 36, 28);
+    font-weight: 700;
+}
+
+.btn-login:hover {
+    background-color: transparent !important;
+    color: rgb(36, 36, 28) !important;
+    border: 2px solid rgb(36, 36, 28);
+    transition: 0.3s;
+}
+
 .navbar-brand{
     font-size: 1.25rem;
     font-weight: bold;

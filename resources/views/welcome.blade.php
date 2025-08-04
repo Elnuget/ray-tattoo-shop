@@ -58,6 +58,7 @@
               <a class="nav-link px-lg-4 rounded" href="#section2">Galería</a>
               <a class="nav-link px-lg-4 rounded" href="#section3">Preguntas Frecuentes</a>
               <a class="nav-link px-lg-4 rounded" href="#section4">Contáctanos</a>
+              <a class="nav-link px-lg-4 rounded btn-login" href="/login">Iniciar Sesión</a>
             </div>
           </div>
         

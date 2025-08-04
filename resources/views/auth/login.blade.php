@@ -55,26 +55,6 @@
             <x-primary-button class="w-full justify-center py-3 bg-gradient-to-r from-red-600 to-black hover:from-red-700 hover:to-gray-900 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg border border-red-500/30">
                 {{ __('Iniciar Sesión') }}
             </x-primary-button>
-
-            <!-- Links -->
-            <div class="flex flex-col space-y-3 text-center">
-                @if (Route::has('password.request'))
-                    <a class="text-sm text-gray-300 hover:text-red-400 transition-colors duration-300 underline decoration-red-500/50 hover:decoration-red-400" 
-                       href="{{ route('password.request') }}">
-                        {{ __('¿Olvidaste tu contraseña?') }}
-                    </a>
-                @endif
-
-                @if (Route::has('register'))
-                    <div class="text-sm text-gray-300">
-                        ¿No tienes cuenta? 
-                        <a href="{{ route('register') }}" 
-                           class="text-red-400 hover:text-red-300 font-semibold transition-colors duration-300 underline decoration-red-500/50 hover:decoration-red-400">
-                            Regístrate aquí
-                        </a>
-                    </div>
-                @endif
-            </div>
         </div>
     </form>
 
