@@ -18,17 +18,20 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-red-300">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-white hover:text-red-300">
-                        {{ __('Usuarios') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')" class="text-white hover:text-red-300">
-                        {{ __('Proyectos') }}
-                    </x-nav-link>
-                </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-nav-link>
+                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Usuarios') }}
+                </x-nav-link>
+                <x-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')">
+                    {{ __('Proyectos') }}
+                </x-nav-link>
+                <x-nav-link :href="route('galeria.index')" :active="request()->routeIs('galeria.*')">
+                    {{ __('Galería') }}
+                </x-nav-link>
+            </div>
             </div>
 
             <!-- Settings Dropdown -->
@@ -79,15 +82,18 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1 bg-black/20">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-red-300">
+                <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-white hover:text-red-300">
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 {{ __('Usuarios') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')" class="text-white hover:text-red-300">
+            <x-responsive-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')">
                 {{ __('Proyectos') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('galeria.index')" :active="request()->routeIs('galeria.*')">
+                {{ __('Galería') }}
             </x-responsive-nav-link>
         </div>
 

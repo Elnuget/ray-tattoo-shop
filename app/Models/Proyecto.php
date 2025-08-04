@@ -120,4 +120,28 @@ class Proyecto extends Model
     {
         $this->attributes['deposito'] = round($value, 2);
     }
+
+    /**
+     * Relación con las imágenes del proyecto
+     */
+    public function imagenes()
+    {
+        return $this->hasMany(Imagen::class)->ordenado();
+    }
+
+    /**
+     * Relación con las imágenes de referencia
+     */
+    public function imagenesReferencia()
+    {
+        return $this->hasMany(Imagen::class)->referencias()->ordenado();
+    }
+
+    /**
+     * Relación con las imágenes del tatuaje
+     */
+    public function imagenesTattoo()
+    {
+        return $this->hasMany(Imagen::class)->tattoos()->ordenado();
+    }
 }
