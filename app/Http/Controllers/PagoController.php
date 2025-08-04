@@ -69,17 +69,28 @@ class PagoController extends Controller
      */
     public function create(Request $request): View
     {
-        // Obtener proyectos activos con saldo pendiente
-        $proyectos = Proyecto::whereIn('estado', ['planificacion', 'en_progreso', 'pausado'])
+        // Obtener proyectos activos con saldo pendiente (considerando depósito)
+        $proyectos = Proyecto::with('pagos')
+            ->whereIn('estado', ['planificacion', 'en_progreso', 'pausado'])
             ->orderBy('cliente')
             ->get()
             ->filter(function ($proyecto) {
-                return $proyecto->saldo_pendiente_actualizado > 0;
+                return $proyecto->saldo_real > 0;
             });
 
         $metodos = Pago::METODOS;
 
-        return view('pagos.create', compact('proyectos', 'metodos'));
+        // Si viene un proyecto_id específico, verificar que exista y tenga saldo pendiente
+        $proyectoSeleccionado = null;
+        if ($request->has('proyecto_id')) {
+            $proyectoSeleccionado = Proyecto::with('pagos')->find($request->proyecto_id);
+            // Si el proyecto no está en la lista filtrada, agregarlo
+            if ($proyectoSeleccionado && !$proyectos->contains('id', $proyectoSeleccionado->id)) {
+                $proyectos->push($proyectoSeleccionado);
+            }
+        }
+
+        return view('pagos.create', compact('proyectos', 'metodos', 'proyectoSeleccionado'));
     }
 
     /**
@@ -112,7 +123,8 @@ class PagoController extends Controller
     {
         // Incluir todos los proyectos activos, no solo los que tienen saldo pendiente
         // porque el pago actual podría estar cambiando de proyecto
-        $proyectos = Proyecto::whereIn('estado', ['planificacion', 'en_progreso', 'pausado'])
+        $proyectos = Proyecto::with('pagos')
+            ->whereIn('estado', ['planificacion', 'en_progreso', 'pausado'])
             ->orderBy('cliente')
             ->get();
 

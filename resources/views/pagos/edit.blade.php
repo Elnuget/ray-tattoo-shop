@@ -37,8 +37,9 @@
                                     <p class="text-gray-300 text-sm">{{ $pago->proyecto->descripcion }}</p>
                                     <p class="text-gray-400 text-xs mt-1">
                                         Total: ${{ number_format($pago->proyecto->total, 2) }} | 
+                                        Depósito: ${{ number_format($pago->proyecto->deposito, 2) }} | 
                                         Pagado: ${{ number_format($pago->proyecto->total_pagado, 2) }} | 
-                                        Pendiente: ${{ number_format($pago->proyecto->saldo_pendiente_actualizado, 2) }}
+                                        Saldo: ${{ number_format($pago->proyecto->saldo_real, 2) }}
                                     </p>
                                 </div>
                                 <input type="hidden" name="proyecto_id" value="{{ $pago->proyecto_id }}">
@@ -83,7 +84,7 @@
                                         <div class="flex justify-between">
                                             <span class="text-gray-300">Saldo disponible:</span>
                                             <span class="text-blue-300 font-medium">
-                                                ${{ number_format($pago->proyecto->saldo_pendiente_actualizado + $pago->monto, 2) }}
+                                                ${{ number_format($pago->proyecto->saldo_real + $pago->monto, 2) }}
                                             </span>
                                         </div>
                                         <p class="text-gray-400 text-xs">
@@ -157,7 +158,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const montoInput = document.getElementById('monto');
             const montoOriginal = {{ $pago->monto }};
-            const saldoDisponible = {{ $pago->proyecto->saldo_pendiente_actualizado + $pago->monto }};
+            const saldoDisponible = {{ $pago->proyecto->saldo_real + $pago->monto }};
 
             montoInput.addEventListener('input', function() {
                 const nuevoMonto = parseFloat(this.value) || 0;
