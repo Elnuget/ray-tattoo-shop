@@ -168,4 +168,12 @@ class Proyecto extends Model
     {
         return $this->total - $this->total_pagado;
     }
+
+    /**
+     * Accessor para calcular el saldo real (considerando depósito y pagos)
+     */
+    public function getSaldoRealAttribute()
+    {
+        return $this->total - $this->deposito - $this->total_pagado;
+    }
 }
