@@ -28,6 +28,9 @@
                 <x-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')">
                     {{ __('Proyectos') }}
                 </x-nav-link>
+                <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos.*')">
+                    {{ __('Pagos') }}
+                </x-nav-link>
                 <x-nav-link :href="route('galeria.index')" :active="request()->routeIs('galeria.*')">
                     {{ __('Galería') }}
                 </x-nav-link>
@@ -91,6 +94,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')">
                 {{ __('Proyectos') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos.*')">
+                {{ __('Pagos') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('galeria.index')" :active="request()->routeIs('galeria.*')">
                 {{ __('Galería') }}

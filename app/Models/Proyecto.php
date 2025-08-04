@@ -144,4 +144,28 @@ class Proyecto extends Model
     {
         return $this->hasMany(Imagen::class)->tattoos()->ordenado();
     }
+
+    /**
+     * Relación con los pagos del proyecto
+     */
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class)->orderBy('fecha_pago', 'desc');
+    }
+
+    /**
+     * Accessor para calcular el total pagado
+     */
+    public function getTotalPagadoAttribute()
+    {
+        return $this->pagos()->sum('monto');
+    }
+
+    /**
+     * Accessor para calcular el saldo pendiente actualizado
+     */
+    public function getSaldoPendienteActualizadoAttribute()
+    {
+        return $this->total - $this->total_pagado;
+    }
 }

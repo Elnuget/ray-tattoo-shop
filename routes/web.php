@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\GaleriaController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,9 @@ Route::middleware('auth')->group(function () {
     
     // Rutas para el CRUD de proyectos
     Route::resource('proyectos', ProyectoController::class);
+    
+    // Rutas para el CRUD de pagos
+    Route::resource('pagos', PagoController::class);
     
     // Rutas para las imágenes de proyectos (nested routes)
     Route::resource('proyectos.imagenes', ImagenController::class)->except(['show']);
