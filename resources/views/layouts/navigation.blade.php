@@ -25,6 +25,9 @@
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-white hover:text-red-300">
                         {{ __('Usuarios') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')" class="text-white hover:text-red-300">
+                        {{ __('Proyectos') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -82,6 +85,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-white hover:text-red-300">
                 {{ __('Usuarios') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')" class="text-white hover:text-red-300">
+                {{ __('Proyectos') }}
             </x-responsive-nav-link>
         </div>
 

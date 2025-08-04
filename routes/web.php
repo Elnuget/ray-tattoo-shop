@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProyectoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,6 +20,9 @@ Route::middleware('auth')->group(function () {
     
     // Rutas para el CRUD de usuarios
     Route::resource('users', UserController::class);
+    
+    // Rutas para el CRUD de proyectos
+    Route::resource('proyectos', ProyectoController::class);
 });
 
 require __DIR__.'/auth.php';
