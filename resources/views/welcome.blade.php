@@ -22,6 +22,7 @@
     <!-- Custom Styles (deben ir después de Bootstrap) -->
     <link rel="stylesheet" href="{{ asset('style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/preloader.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     
     <!-- FontAwesome -->
     <script src="https://kit.fontawesome.com/c26cd2166c.js" crossorigin="anonymous"></script>
@@ -77,6 +78,15 @@
     
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Script principal del sitio -->
+    <script src="{{ asset('script.js') }}"></script>
+    
+    <!-- JavaScript responsivo -->
+    <script src="{{ asset('js/responsive.js') }}"></script>
     
     <!-- Inicialización de scripts -->
     <script>

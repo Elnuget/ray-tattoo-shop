@@ -23,8 +23,30 @@
 
 /* Asegurar que los SVGs estén correctamente posicionados */
 .openingLogo, .openingLogo2 {
-    max-width: 100%;
+    max-width: 90%;
     height: auto;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+    .openingLogo, .openingLogo2 {
+        max-width: 95%;
+    }
+    
+    /* Ajustar tamaño de texto en SVG para móviles */
+    .animated-text {
+        font-size: 36px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .openingLogo, .openingLogo2 {
+        max-width: 98%;
+    }
+    
+    .animated-text {
+        font-size: 28px !important;
+    }
 }
 
 /* Animación de trazo para el texto */

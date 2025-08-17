@@ -1,0 +1,472 @@
+/* ===== RAY TATTOO SHOP - RESPONSIVE STYLES ===== */
+
+/* ===== VARIABLES CSS ===== */
+:root {
+    --primary-color: rgb(36, 36, 28);
+    --background-color: rgb(245, 245, 245);
+    --transition: all 0.3s ease;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --mobile-padding: 1rem;
+    --tablet-padding: 2rem;
+    --desktop-padding: 3rem;
+    --mobile-font-size: 0.9rem;
+    --tablet-font-size: 1rem;
+    --desktop-font-size: 1.1rem;
+    --vh: 1vh;
+}
+
+/* ===== BASE RESPONSIVE STYLES ===== */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* Fix viewport height for mobile browsers */
+.full-height {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Custom notification styles */
+.custom-notification {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===== NAVBAR RESPONSIVE ===== */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+/* ===== HERO SECTION RESPONSIVE ===== */
+.main {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+#blacklinetext {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.1;
+}
+
+.main h6 {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    margin-bottom: 2rem;
+}
+
+.main .bt1, .main .bt2 {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+/* ===== CAROUSEL RESPONSIVE ===== */
+.carousel-inner img {
+    height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+/* ===== ARTISTS SECTION RESPONSIVE ===== */
+.about img {
+    border-radius: 15px;
+    transition: var(--transition);
+    max-width: 100%;
+    height: auto;
+}
+
+.about img:hover {
+    transform: scale(1.05);
+}
+
+/* ===== SERVICES RESPONSIVE ===== */
+.services .card {
+    border-radius: 20px;
+    transition: var(--transition);
+    border: none;
+    box-shadow: var(--shadow);
+}
+
+.services .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+/* ===== GALLERY RESPONSIVE ===== */
+.portfolio .item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+}
+
+.portfolio .item img {
+    transition: var(--transition);
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.portfolio .item:hover img {
+    transform: scale(1.1);
+}
+
+.portfolio .item span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.portfolio .item:hover span {
+    opacity: 1;
+}
+
+/* ===== BUTTONS RESPONSIVE ===== */
+.button {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.25rem;
+}
+
+.button:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* ===== CONTACT FORM RESPONSIVE ===== */
+.form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(36, 36, 28, 0.25);
+}
+
+.btn-form {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.btn-form:hover {
+    background-color: rgba(36, 36, 28, 0.8);
+    color: white;
+}
+
+/* ===== MOBILE STYLES (max-width: 768px) ===== */
+@media (max-width: 768px) {
+    /* Navbar mobile */
+    .navbar-collapse {
+        text-align: center;
+        padding-top: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 0 !important;
+        margin: 0.25rem 0;
+    }
+    
+    /* Hero section mobile */
+    .main {
+        text-align: center;
+        padding: 2rem 0;
+    }
+    
+    .main .row {
+        flex-direction: column-reverse;
+    }
+    
+    .main .col-md-5 {
+        margin-top: 2rem;
+    }
+    
+    .main .bt1, .main .bt2 {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    /* Carousel mobile */
+    .carousel-inner img {
+        height: 250px;
+    }
+    
+    /* Artists mobile */
+    .about .row > div {
+        margin-bottom: 2rem;
+    }
+    
+    .about .col-5, .about .col-7 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .about .float-end {
+        float: none !important;
+    }
+    
+    /* Services mobile */
+    .services .col-lg-4 {
+        margin-bottom: 2rem;
+    }
+    
+    /* Gallery mobile */
+    .portfolio .col-sm-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .portfolio .item img {
+        height: 200px;
+    }
+    
+    /* FAQ mobile */
+    .faq-section .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    /* Contact mobile */
+    .contact .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 2rem;
+    }
+    
+    iframe {
+        height: 250px !important;
+    }
+}
+
+/* ===== TABLET STYLES (768px - 992px) ===== */
+@media (min-width: 769px) and (max-width: 992px) {
+    .portfolio .col-sm-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .services .col-lg-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .services .col-lg-4:last-child {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* ===== SMALL MOBILE STYLES (max-width: 480px) ===== */
+@media (max-width: 480px) {
+    /* Typography adjustments */
+    h1 {
+        font-size: 1.75rem !important;
+    }
+    
+    h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    h5 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Padding adjustments */
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .py-5 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    /* Button adjustments */
+    .main .bt1, .main .bt2 {
+        font-size: 0.8rem;
+        padding: 0.6rem 1rem;
+    }
+    
+    /* Form adjustments */
+    .form-control {
+        font-size: 14px;
+    }
+    
+    /* Navbar brand */
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    /* Gallery adjustments */
+    .portfolio .item img {
+        height: 180px;
+    }
+    
+    /* Artist cards */
+    .about p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+}
+
+/* ===== LARGE SCREENS (min-width: 1200px) ===== */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+    
+    .carousel-inner img {
+        height: 500px;
+    }
+    
+    .portfolio .item img {
+        height: 300px;
+    }
+}
+
+/* ===== TOUCH-FRIENDLY IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+    .btn {
+        min-height: 44px;
+        padding: 0.75rem 1.5rem;
+        touch-action: manipulation;
+    }
+    
+    .form-control {
+        min-height: 44px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .nav-link {
+        padding: 1rem 0.75rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Gallery touch improvements */
+    .portfolio .item {
+        touch-action: manipulation;
+    }
+    
+    /* Carousel touch improvements */
+    .carousel {
+        touch-action: pan-y;
+    }
+    
+    /* Form validation styles */
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .form-control.is-valid {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+}
+
+/* ===== LAZY LOADING STYLES ===== */
+img.lazy {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+img.lazy.loaded {
+    opacity: 1;
+}
+
+/* ===== SMOOTH ANIMATIONS ===== */
+.smooth-transition {
+    transition: var(--transition);
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+.btn:focus,
+.nav-link:focus,
+.form-control:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .navbar,
+    .portfolio-modal,
+    #deleted {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}

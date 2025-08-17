@@ -22,6 +22,7 @@
     <!-- Custom Styles (deben ir después de Bootstrap) -->
     <link rel="stylesheet" href="{{ asset('style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/preloader.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     
     <!-- FontAwesome -->
     <script src="https://kit.fontawesome.com/c26cd2166c.js" crossorigin="anonymous"></script>
