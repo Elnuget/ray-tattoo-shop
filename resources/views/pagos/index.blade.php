@@ -22,8 +22,8 @@
             <div class="mb-6 glass rounded-xl p-6 border border-red-500/20 bg-black/20 backdrop-blur-sm">
                 <div class="text-center">
                     <h3 class="text-lg font-medium text-gray-300 mb-2">Total General de Pagos</h3>
-                    <p class="text-4xl font-bold text-white">${{ number_format($pagos->sum('monto'), 2) }}</p>
-                    <p class="text-sm text-gray-400 mt-1">{{ $pagos->count() }} transacciones</p>
+                    <p id="total-general" class="text-4xl font-bold text-white">$0.00</p>
+                    <p id="contador-transacciones" class="text-sm text-gray-400 mt-1">0 transacciones</p>
                 </div>
             </div>
 
@@ -82,30 +82,26 @@
             </div>
 
             <!-- Tarjetas por Método de Pago -->
-            @if($pagos->count() > 0)
-                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    @php
-                        $pagosPorMetodo = $pagos->groupBy('metodo');
-                    @endphp
-                    
-                    @foreach($pagosPorMetodo as $metodo => $pagosMetodo)
-                        <div class="glass rounded-lg p-4 border border-red-500/20 bg-black/20 backdrop-blur-sm">
-                            <div class="text-center">
-                                <h4 class="text-sm font-medium mb-2
-                                    @if($metodo === 'efectivo') text-green-300
-                                    @elseif($metodo === 'transferencia') text-blue-300
-                                    @elseif(str_contains($metodo, 'tarjeta')) text-purple-300
-                                    @else text-gray-300
-                                    @endif">
-                                    {{ \App\Models\Pago::METODOS[$metodo] ?? ucfirst($metodo) }}
-                                </h4>
-                                <p class="text-2xl font-bold text-white">${{ number_format($pagosMetodo->sum('monto'), 2) }}</p>
-                                <p class="text-xs text-gray-400 mt-1">{{ $pagosMetodo->count() }} pagos</p>
-                            </div>
+            <div id="tarjetas-metodos" class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                @foreach($metodos as $key => $metodo)
+                    <div class="glass rounded-lg p-4 border border-red-500/20 bg-black/20 backdrop-blur-sm" 
+                         data-metodo="{{ $key }}" 
+                         style="display: none;">
+                        <div class="text-center">
+                            <h4 class="text-sm font-medium mb-2
+                                @if($key === 'efectivo') text-green-300
+                                @elseif($key === 'transferencia') text-blue-300
+                                @elseif(str_contains($key, 'tarjeta')) text-purple-300
+                                @else text-gray-300
+                                @endif">
+                                {{ $metodo }}
+                            </h4>
+                            <p class="metodo-total text-2xl font-bold text-white">$0.00</p>
+                            <p class="metodo-contador text-xs text-gray-400 mt-1">0 pagos</p>
                         </div>
-                    @endforeach
-                </div>
-            @endif
+                    </div>
+                @endforeach
+            </div>
 
             <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm overflow-hidden">
                 <div class="p-6">
@@ -128,7 +124,8 @@
                                     <tr class="hover:bg-black/30 transition-colors duration-200 fila-pago" 
                                         data-usuario-id="{{ $pago->proyecto->user_id ?? '' }}"
                                         data-metodo="{{ $pago->metodo }}"
-                                        data-cliente="{{ strtolower($pago->proyecto->cliente) }}">
+                                        data-cliente="{{ strtolower($pago->proyecto->cliente) }}"
+                                        data-monto="{{ $pago->monto }}">>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white font-medium">
                                             {{ Str::limit($pago->proyecto->descripcion, 30) }}
                                         </td>
@@ -216,11 +213,14 @@
                 const clienteBuscado = filtroCliente.value.toLowerCase().trim();
 
                 let filasVisibles = 0;
+                let totalGeneral = 0;
+                const totalesPorMetodo = {};
 
                 filasPagos.forEach(function(fila) {
                     const usuarioId = fila.getAttribute('data-usuario-id');
                     const metodo = fila.getAttribute('data-metodo');
                     const cliente = fila.getAttribute('data-cliente');
+                    const monto = parseFloat(fila.getAttribute('data-monto')) || 0;
 
                     let mostrarFila = true;
 
@@ -242,13 +242,55 @@
                     if (mostrarFila) {
                         fila.style.display = '';
                         filasVisibles++;
+                        totalGeneral += monto;
+                        
+                        // Acumular por método
+                        if (!totalesPorMetodo[metodo]) {
+                            totalesPorMetodo[metodo] = { total: 0, count: 0 };
+                        }
+                        totalesPorMetodo[metodo].total += monto;
+                        totalesPorMetodo[metodo].count++;
                     } else {
                         fila.style.display = 'none';
                     }
                 });
 
+                // Actualizar totales en la interfaz
+                actualizarTotales(totalGeneral, filasVisibles, totalesPorMetodo);
+
                 // Mostrar mensaje si no hay resultados
                 mostrarMensajeSinResultados(filasVisibles === 0);
+            }
+
+            function actualizarTotales(totalGeneral, cantidadTransacciones, totalesPorMetodo) {
+                // Actualizar total general
+                document.getElementById('total-general').textContent = '$' + totalGeneral.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                document.getElementById('contador-transacciones').textContent = cantidadTransacciones + ' transacciones';
+
+                // Actualizar tarjetas por método
+                const tarjetasMetodos = document.querySelectorAll('[data-metodo]');
+                tarjetasMetodos.forEach(function(tarjeta) {
+                    const metodo = tarjeta.getAttribute('data-metodo');
+                    const datos = totalesPorMetodo[metodo] || { total: 0, count: 0 };
+                    
+                    const totalElement = tarjeta.querySelector('.metodo-total');
+                    const contadorElement = tarjeta.querySelector('.metodo-contador');
+                    
+                    if (datos.count > 0) {
+                        tarjeta.style.display = '';
+                        totalElement.textContent = '$' + datos.total.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                        contadorElement.textContent = datos.count + ' pagos';
+                    } else {
+                        tarjeta.style.display = 'none';
+                    }
+                });
             }
 
             function mostrarMensajeSinResultados(mostrar) {
