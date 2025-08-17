@@ -114,12 +114,49 @@
                                 <x-input-error :messages="$errors->get('total')" class="mt-2" />
                             </div>
 
+                            <!-- Configuración de Pagos -->
+                            <div class="md:col-span-2">
+                                <h4 class="text-md font-medium text-white mb-3 border-b border-red-500/10 pb-1">Configuración de Pagos</h4>
+                                
+                                <!-- Opciones rápidas de depósito -->
+                                <div class="mb-4">
+                                    <label class="text-sm text-gray-300 mb-2 block">Opciones rápidas de depósito:</label>
+                                    <div class="flex flex-wrap gap-3">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" class="deposito-checkbox w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500" data-percentage="50">
+                                            <span class="text-sm text-gray-300">50% del total</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" class="deposito-checkbox w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500" data-percentage="30">
+                                            <span class="text-sm text-gray-300">30% del total</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" class="deposito-checkbox w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500" data-percentage="25">
+                                            <span class="text-sm text-gray-300">25% del total</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" class="deposito-checkbox w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500" data-percentage="100">
+                                            <span class="text-sm text-gray-300">Pago total</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Depósito -->
                             <div>
                                 <x-input-label for="deposito" :value="__('Depósito/Anticipo')" class="text-white" />
                                 <x-text-input id="deposito" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
                                               type="number" name="deposito" :value="old('deposito', 0)" step="0.01" min="0" />
+                                <p class="mt-1 text-sm text-gray-400">Puedes usar las opciones rápidas arriba o ingresar un monto personalizado</p>
                                 <x-input-error :messages="$errors->get('deposito')" class="mt-2" />
+                            </div>
+
+                            <!-- Saldo Pendiente -->
+                            <div>
+                                <x-input-label for="saldo_pendiente" :value="__('Saldo Pendiente')" class="text-white" />
+                                <x-text-input id="saldo_pendiente" class="block mt-1 w-full bg-black/30 border-gray-500/30 text-gray-400" 
+                                              type="number" name="saldo_pendiente" step="0.01" readonly />
+                                <p class="mt-1 text-sm text-gray-400">Se calcula automáticamente: Precio Total - Depósito</p>
                             </div>
 
                             <!-- Método de Pago del Depósito -->
@@ -136,6 +173,15 @@
                                 </select>
                                 <p class="mt-1 text-sm text-gray-400">Solo se aplica si hay un depósito mayor a 0</p>
                                 <x-input-error :messages="$errors->get('metodo_deposito')" class="mt-2" />
+                            </div>
+
+                            <!-- Fecha de Pago del Depósito -->
+                            <div>
+                                <x-input-label for="fecha_pago_deposito" :value="__('Fecha de Pago del Depósito')" class="text-white" />
+                                <x-text-input id="fecha_pago_deposito" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
+                                              type="date" name="fecha_pago_deposito" :value="old('fecha_pago_deposito', date('Y-m-d'))" />
+                                <p class="mt-1 text-sm text-gray-400">Fecha en que se recibió el depósito</p>
+                                <x-input-error :messages="$errors->get('fecha_pago_deposito')" class="mt-2" />
                             </div>
 
                             <!-- Precio por Sesión -->
@@ -205,6 +251,9 @@
             const totalInput = document.getElementById('total');
             const sesionesInput = document.getElementById('sesiones');
             const precioSesionInput = document.getElementById('precio_por_sesion');
+            const depositoInput = document.getElementById('deposito');
+            const saldoPendienteInput = document.getElementById('saldo_pendiente');
+            const depositoCheckboxes = document.querySelectorAll('.deposito-checkbox');
             
             function calcularPrecioPorSesion() {
                 const total = parseFloat(totalInput.value) || 0;
@@ -218,12 +267,62 @@
                 }
             }
             
+            function calcularSaldoPendiente() {
+                const total = parseFloat(totalInput.value) || 0;
+                const deposito = parseFloat(depositoInput.value) || 0;
+                const saldo = (total - deposito).toFixed(2);
+                saldoPendienteInput.value = saldo >= 0 ? saldo : '0.00';
+            }
+            
+            function aplicarPorcentajeDeposito(porcentaje) {
+                const total = parseFloat(totalInput.value) || 0;
+                if (total > 0) {
+                    const deposito = (total * porcentaje / 100).toFixed(2);
+                    depositoInput.value = deposito;
+                    calcularSaldoPendiente();
+                }
+            }
+            
+            // Manejar checkboxes de depósito
+            depositoCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Desmarcar otros checkboxes
+                        depositoCheckboxes.forEach(cb => {
+                            if (cb !== this) cb.checked = false;
+                        });
+                        
+                        const porcentaje = parseInt(this.dataset.percentage);
+                        aplicarPorcentajeDeposito(porcentaje);
+                    }
+                });
+            });
+            
             // Calcular cuando cambien los valores
-            totalInput.addEventListener('input', calcularPrecioPorSesion);
+            totalInput.addEventListener('input', function() {
+                calcularPrecioPorSesion();
+                calcularSaldoPendiente();
+                
+                // Si hay un checkbox marcado, recalcular el depósito
+                const checkedBox = document.querySelector('.deposito-checkbox:checked');
+                if (checkedBox) {
+                    const porcentaje = parseInt(checkedBox.dataset.percentage);
+                    aplicarPorcentajeDeposito(porcentaje);
+                }
+            });
+            
             sesionesInput.addEventListener('input', calcularPrecioPorSesion);
+            
+            depositoInput.addEventListener('input', function() {
+                calcularSaldoPendiente();
+                
+                // Desmarcar checkboxes si se edita manualmente
+                depositoCheckboxes.forEach(cb => cb.checked = false);
+            });
             
             // Calcular al cargar la página si hay valores
             calcularPrecioPorSesion();
+            calcularSaldoPendiente();
         });
     </script>
 </x-app-layout>
