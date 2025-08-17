@@ -11,19 +11,37 @@ class ProyectoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Los administradores ven todos los proyectos, usuarios normales solo los suyos
+        $query = Proyecto::with(['pagos', 'user']);
+        
+        // Determinar el user_id a filtrar
+        $filtroUserId = null;
+        
         if (auth()->user()->es_admin) {
-            $proyectos = Proyecto::with(['pagos', 'user'])->latest()->paginate(10);
+            // Los administradores pueden filtrar por cualquier usuario
+            if ($request->filled('user_id')) {
+                $filtroUserId = $request->user_id;
+            }
         } else {
-            $proyectos = Proyecto::with(['pagos', 'user'])
-                ->where('user_id', auth()->id())
-                ->latest()
-                ->paginate(10);
+            // Los usuarios no admin siempre ven solo sus proyectos
+            $filtroUserId = auth()->id();
         }
         
-        return view('proyectos.index', compact('proyectos'));
+        // Aplicar filtro si hay uno definido
+        if ($filtroUserId) {
+            $query->where('user_id', $filtroUserId);
+        }
+        
+        $proyectos = $query->latest()->paginate(10)->appends($request->query());
+        
+        // Obtener usuarios para el dropdown
+        $usuarios = User::orderBy('name')->get();
+        
+        // Determinar el usuario seleccionado por defecto
+        $usuarioSeleccionado = $request->filled('user_id') ? $request->user_id : auth()->id();
+        
+        return view('proyectos.index', compact('proyectos', 'usuarios', 'usuarioSeleccionado'));
     }
 
     /**

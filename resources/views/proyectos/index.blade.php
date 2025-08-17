@@ -20,6 +20,42 @@
 
             <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm overflow-hidden">
                 <div class="p-6">
+                    <div class="mb-6">
+                        <form method="GET" action="{{ route('proyectos.index') }}" class="flex items-center gap-4">
+                            <div class="flex-1 max-w-sm">
+                                <label for="user_id" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Filtrar por Usuario
+                                    @if(!auth()->user()->es_admin)
+                                        <span class="text-xs text-gray-400">(Solo lectura)</span>
+                                    @endif
+                                </label>
+                                <select name="user_id" id="user_id" 
+                                        {{ auth()->user()->es_admin ? 'onchange=this.form.submit()' : 'disabled' }}
+                                        class="w-full px-4 py-2 bg-black/40 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 backdrop-blur-sm {{ !auth()->user()->es_admin ? 'opacity-75 cursor-not-allowed' : '' }}">
+                                    @if(auth()->user()->es_admin)
+                                        <option value="">Todos los usuarios</option>
+                                    @endif
+                                    @foreach($usuarios as $usuario)
+                                        <option value="{{ $usuario->id }}" 
+                                                {{ $usuarioSeleccionado == $usuario->id ? 'selected' : '' }}>
+                                            {{ $usuario->name }}
+                                            @if($usuario->id == auth()->id())
+                                                (Tú)
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if(auth()->user()->es_admin && request('user_id'))
+                                <div class="flex-shrink-0 mt-6">
+                                    <a href="{{ route('proyectos.index') }}" 
+                                       class="px-4 py-2 bg-gray-600/20 text-gray-300 rounded-lg hover:bg-gray-600/30 transition-colors duration-200 border border-gray-500/30">
+                                        Limpiar filtro
+                                    </a>
+                                </div>
+                            @endif
+                        </form>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
