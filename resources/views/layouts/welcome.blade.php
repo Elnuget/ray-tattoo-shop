@@ -34,38 +34,11 @@
         <script src="{{ asset('script.js') }}"></script>
     @endif
     
-    <title>Rotto Tattoo Studio</title>
+    <title>@yield('title', 'Ray Tattoo Studio')</title>
+    @yield('extra-css')
 </head>
-<body class="loading">  
-    <!-- Preloader -->
-    @include('components.preloader')
-
-    <!-- Navbar -->
-    @include('components.navbar')
-
-    <!-- Hero Section -->
-    @include('components.hero')
-
-    <!-- Artists Section -->
-    @include('components.artists')
-
-    <!-- Services Section -->
-    @include('components.services')
-
-    <!-- Gallery Section -->
-    @include('components.gallery')
-
-    <!-- Gallery Modals -->
-    @include('components.gallery-modals')
-
-    <!-- FAQ Section -->
-    @include('components.faq')
-
-    <!-- Contact Section -->
-    @include('components.contact')
-
-    <!-- Footer -->
-    @include('components.footer')
+<body class="@yield('body-class', '')">
+    @yield('content')
 
     <!-- Scripts al final del body para mejor rendimiento -->
     
@@ -80,11 +53,8 @@
     
     <!-- Inicialización de scripts -->
     <script>
-        // Script del preloader - remover la clase loading y el preloader después de la animación
-        setTimeout(function() {
-            document.body.classList.remove('loading');
-            document.getElementById('deleted').style.display = 'none';
-        }, 4500);
+        // Script del preloader
+        @yield('preloader-script')
 
         // Inicialización de AOS
         AOS.init({
@@ -94,6 +64,7 @@
             offset: -475,
         });
     </script>
-</body>
+    
+    @yield('extra-js')
 </body>
 </html>
