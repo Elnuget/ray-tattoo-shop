@@ -35,7 +35,7 @@
                             <!-- Usuario -->
                             <div>
                                 <x-input-label for="user_id" :value="__('Usuario Asignado')" class="text-white" />
-                                <select id="user_id" name="user_id" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm">
+                                <select id="user_id" name="user_id" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm" {{ auth()->user()->es_admin ? '' : 'disabled' }}>
                                     <option value="">Seleccionar usuario (opcional)</option>
                                     @foreach($usuarios as $usuario)
                                         <option value="{{ $usuario->id }}" {{ old('user_id', $proyecto->user_id) == $usuario->id ? 'selected' : '' }}>
@@ -43,6 +43,11 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @if(!auth()->user()->es_admin)
+                                    <!-- Campo oculto para enviar el valor cuando está deshabilitado -->
+                                    <input type="hidden" name="user_id" value="{{ old('user_id', $proyecto->user_id) }}">
+                                    <p class="mt-1 text-sm text-gray-400">Solo los administradores pueden cambiar el usuario asignado</p>
+                                @endif
                                 <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
                             </div>
 

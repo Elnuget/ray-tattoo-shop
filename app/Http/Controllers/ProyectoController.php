@@ -13,7 +13,16 @@ class ProyectoController extends Controller
      */
     public function index()
     {
-        $proyectos = Proyecto::with(['pagos', 'user'])->latest()->paginate(10);
+        // Los administradores ven todos los proyectos, usuarios normales solo los suyos
+        if (auth()->user()->es_admin) {
+            $proyectos = Proyecto::with(['pagos', 'user'])->latest()->paginate(10);
+        } else {
+            $proyectos = Proyecto::with(['pagos', 'user'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->paginate(10);
+        }
+        
         return view('proyectos.index', compact('proyectos'));
     }
 
@@ -48,7 +57,14 @@ class ProyectoController extends Controller
             'notas' => ['nullable', 'string'],
         ]);
 
-        Proyecto::create($request->all());
+        $data = $request->all();
+        
+        // Si el usuario no es admin, forzar que el user_id sea el usuario actual
+        if (!auth()->user()->es_admin) {
+            $data['user_id'] = auth()->id();
+        }
+
+        Proyecto::create($data);
 
         return redirect()->route('proyectos.index')->with('success', 'Proyecto creado exitosamente.');
     }
@@ -67,6 +83,11 @@ class ProyectoController extends Controller
      */
     public function edit(Proyecto $proyecto)
     {
+        // Verificar permisos: admin puede editar todos, usuarios solo los suyos
+        if (!auth()->user()->es_admin && $proyecto->user_id !== auth()->id()) {
+            abort(403, 'No tienes permisos para editar este proyecto.');
+        }
+        
         $usuarios = User::orderBy('name')->get();
         return view('proyectos.edit', compact('proyecto', 'usuarios'));
     }
@@ -76,6 +97,11 @@ class ProyectoController extends Controller
      */
     public function update(Request $request, Proyecto $proyecto)
     {
+        // Verificar permisos: admin puede editar todos, usuarios solo los suyos
+        if (!auth()->user()->es_admin && $proyecto->user_id !== auth()->id()) {
+            abort(403, 'No tienes permisos para editar este proyecto.');
+        }
+        
         $request->validate([
             'user_id' => ['nullable', 'exists:users,id'],
             'cliente' => ['required', 'string', 'max:255'],
@@ -93,7 +119,14 @@ class ProyectoController extends Controller
             'notas' => ['nullable', 'string'],
         ]);
 
-        $proyecto->update($request->all());
+        $data = $request->all();
+        
+        // Si el usuario no es admin, no permitir cambiar el user_id
+        if (!auth()->user()->es_admin) {
+            unset($data['user_id']); // Remover user_id de los datos a actualizar
+        }
+
+        $proyecto->update($data);
 
         return redirect()->route('proyectos.index')->with('success', 'Proyecto actualizado exitosamente.');
     }
@@ -103,6 +136,11 @@ class ProyectoController extends Controller
      */
     public function destroy(Proyecto $proyecto)
     {
+        // Verificar permisos: admin puede eliminar todos, usuarios solo los suyos
+        if (!auth()->user()->es_admin && $proyecto->user_id !== auth()->id()) {
+            abort(403, 'No tienes permisos para eliminar este proyecto.');
+        }
+        
         $proyecto->delete();
         return redirect()->route('proyectos.index')->with('success', 'Proyecto eliminado exitosamente.');
     }
