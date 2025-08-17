@@ -175,14 +175,15 @@ body {
 }
 
 .circle {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    background-color: var(--primary-color);
-    display: flex;
+    background-color: rgb(245, 245, 245);
+    display: inline-block;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
+    margin-bottom: 20px;
+    padding: 12px;
 }
 
 /* ===== GALLERY RESPONSIVE ===== */

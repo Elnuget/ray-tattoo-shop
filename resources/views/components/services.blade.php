@@ -20,7 +20,7 @@
             @include('components.service-card', [
                 'title' => 'COVER UP',
                 'icon' => 'images/coverup.png',
-                'description' => '¡Cubre tu pasado con Rotto Tattoo Studio! Nuestros artistas especializados en cover-up transforman tatuajes antiguos en nuevas y hermosas obras de arte. Si quieres cambiar tu tatuaje, creemos un nuevo look.',
+                'description' => '¡Cubre tu pasado con Rotto Tattoo Studio! Nuestros artistas especializados en cover-up transforman tatuajes antiguos en nuevas y hermosas obras de arte.',
                 'animation' => 'fade-left'
             ])
         </div>

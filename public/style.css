@@ -216,7 +216,7 @@ color: rgba(36, 36, 28 , 0.5) ;}
 .circle{
     height: 70px;
     width: 70px;
-    background-color: rgb(245, 245, 245);
+    background-color: rgb(245, 245, 245) !important;
     color: rgb(36, 36, 28);
     padding: 12px;
     font-size: 30px;
@@ -226,11 +226,8 @@ color: rgba(36, 36, 28 , 0.5) ;}
    
 }
 .card:hover .circle{
-
-   background-color: rgba(36, 36, 28 , 0.2);
-   
-    transition: 0.5s;
-
+   background-color: rgb(220, 220, 220) !important;
+   transition: 0.5s;
 }
 
 
