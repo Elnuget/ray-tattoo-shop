@@ -17,7 +17,7 @@ class PagoController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Pago::with('proyecto');
+        $query = Pago::with(['proyecto.user']);
 
         // Filtro por proyecto
         if ($request->filled('proyecto_id')) {
@@ -57,11 +57,14 @@ class PagoController extends Controller
         // Obtener métodos de pago para el filtro
         $metodos = Pago::METODOS;
 
+        // Obtener usuarios para el filtro
+        $usuarios = \App\Models\User::where('visible', true)->orderBy('name')->get();
+
         // Estadísticas para el resumen
         $totalPagos = $query->sum('monto');
         $cantidadPagos = $query->count();
 
-        return view('pagos.index', compact('pagos', 'proyectos', 'metodos', 'totalPagos', 'cantidadPagos'));
+        return view('pagos.index', compact('pagos', 'proyectos', 'metodos', 'usuarios', 'totalPagos', 'cantidadPagos'));
     }
 
     /**

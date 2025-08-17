@@ -27,6 +27,47 @@
                 </div>
             </div>
 
+            <!-- Filtros -->
+            <div class="mb-6 glass rounded-xl p-6 border border-red-500/20 bg-black/20 backdrop-blur-sm">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Filtro por Usuario -->
+                    <div>
+                        <label for="filtro-usuario" class="block text-sm font-medium text-gray-300 mb-2">Filtrar por Usuario</label>
+                        <select id="filtro-usuario" class="w-full px-3 py-2 bg-black/40 border border-red-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            <option value="">Todos los usuarios</option>
+                            @foreach($usuarios as $usuario)
+                                <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Filtro por Método -->
+                    <div>
+                        <label for="filtro-metodo" class="block text-sm font-medium text-gray-300 mb-2">Filtrar por Método</label>
+                        <select id="filtro-metodo" class="w-full px-3 py-2 bg-black/40 border border-red-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            <option value="">Todos los métodos</option>
+                            @foreach($metodos as $key => $metodo)
+                                <option value="{{ $key }}">{{ $metodo }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Filtro por Cliente -->
+                    <div>
+                        <label for="filtro-cliente" class="block text-sm font-medium text-gray-300 mb-2">Filtrar por Cliente</label>
+                        <input type="text" id="filtro-cliente" placeholder="Buscar cliente..." 
+                               class="w-full px-3 py-2 bg-black/40 border border-red-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Botón para limpiar filtros -->
+                <div class="mt-4 text-center">
+                    <button id="limpiar-filtros" class="px-4 py-2 bg-gray-600/20 text-gray-300 rounded-lg hover:bg-gray-600/30 transition-colors duration-200 border border-gray-500/30">
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+
             <!-- Tarjetas por Método de Pago -->
             @if($pagos->count() > 0)
                 <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -61,6 +102,7 @@
                                 <tr class="border-b border-red-500/20">
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Proyecto</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Usuario</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Monto</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Método</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fecha</th>
@@ -70,12 +112,18 @@
                             </thead>
                             <tbody class="divide-y divide-red-500/20">
                                 @forelse($pagos as $pago)
-                                    <tr class="hover:bg-black/30 transition-colors duration-200">
+                                    <tr class="hover:bg-black/30 transition-colors duration-200 fila-pago" 
+                                        data-usuario-id="{{ $pago->proyecto->user_id ?? '' }}"
+                                        data-metodo="{{ $pago->metodo }}"
+                                        data-cliente="{{ strtolower($pago->proyecto->cliente) }}">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white font-medium">
                                             {{ Str::limit($pago->proyecto->descripcion, 30) }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                             {{ $pago->proyecto->cliente }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                            {{ $pago->proyecto->user->name ?? 'Sin asignar' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white font-bold">
                                             ${{ number_format($pago->monto, 2) }}
@@ -114,7 +162,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                                        <td colspan="8" class="px-6 py-8 text-center text-gray-400">
                                             <div class="flex flex-col items-center">
                                                 <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
@@ -140,4 +188,97 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filtroUsuario = document.getElementById('filtro-usuario');
+            const filtroMetodo = document.getElementById('filtro-metodo');
+            const filtroCliente = document.getElementById('filtro-cliente');
+            const limpiarFiltros = document.getElementById('limpiar-filtros');
+            const filasPagos = document.querySelectorAll('.fila-pago');
+
+            function aplicarFiltros() {
+                const usuarioSeleccionado = filtroUsuario.value;
+                const metodoSeleccionado = filtroMetodo.value;
+                const clienteBuscado = filtroCliente.value.toLowerCase().trim();
+
+                let filasVisibles = 0;
+
+                filasPagos.forEach(function(fila) {
+                    const usuarioId = fila.getAttribute('data-usuario-id');
+                    const metodo = fila.getAttribute('data-metodo');
+                    const cliente = fila.getAttribute('data-cliente');
+
+                    let mostrarFila = true;
+
+                    // Filtro por usuario
+                    if (usuarioSeleccionado && usuarioId !== usuarioSeleccionado) {
+                        mostrarFila = false;
+                    }
+
+                    // Filtro por método
+                    if (metodoSeleccionado && metodo !== metodoSeleccionado) {
+                        mostrarFila = false;
+                    }
+
+                    // Filtro por cliente
+                    if (clienteBuscado && !cliente.includes(clienteBuscado)) {
+                        mostrarFila = false;
+                    }
+
+                    if (mostrarFila) {
+                        fila.style.display = '';
+                        filasVisibles++;
+                    } else {
+                        fila.style.display = 'none';
+                    }
+                });
+
+                // Mostrar mensaje si no hay resultados
+                mostrarMensajeSinResultados(filasVisibles === 0);
+            }
+
+            function mostrarMensajeSinResultados(mostrar) {
+                let mensajeExistente = document.getElementById('mensaje-sin-resultados');
+                
+                if (mostrar && !mensajeExistente) {
+                    const tbody = document.querySelector('tbody');
+                    const fila = document.createElement('tr');
+                    fila.id = 'mensaje-sin-resultados';
+                    fila.innerHTML = `
+                        <td colspan="8" class="px-6 py-8 text-center text-gray-400">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <p>No se encontraron pagos con los filtros aplicados</p>
+                                <button onclick="limpiarTodosFiltros()" class="mt-2 text-red-400 hover:text-red-300">
+                                    Limpiar filtros
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(fila);
+                } else if (!mostrar && mensajeExistente) {
+                    mensajeExistente.remove();
+                }
+            }
+
+            function limpiarTodosFiltros() {
+                filtroUsuario.value = '';
+                filtroMetodo.value = '';
+                filtroCliente.value = '';
+                aplicarFiltros();
+            }
+
+            // Hacer la función global para que pueda ser llamada desde el HTML
+            window.limpiarTodosFiltros = limpiarTodosFiltros;
+
+            // Eventos
+            filtroUsuario.addEventListener('change', aplicarFiltros);
+            filtroMetodo.addEventListener('change', aplicarFiltros);
+            filtroCliente.addEventListener('input', aplicarFiltros);
+            limpiarFiltros.addEventListener('click', limpiarTodosFiltros);
+        });
+    </script>
 </x-app-layout>
