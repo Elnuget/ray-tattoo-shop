@@ -31,6 +31,20 @@
                                 <x-input-error :messages="$errors->get('cliente')" class="mt-2" />
                             </div>
 
+                            <!-- Usuario -->
+                            <div>
+                                <x-input-label for="user_id" :value="__('Usuario Asignado')" class="text-white" />
+                                <select id="user_id" name="user_id" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm">
+                                    <option value="">Seleccionar usuario (opcional)</option>
+                                    @foreach($usuarios as $usuario)
+                                        <option value="{{ $usuario->id }}" {{ old('user_id', auth()->id()) == $usuario->id ? 'selected' : '' }}>
+                                            {{ $usuario->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
+                            </div>
+
                             <!-- Descripción -->
                             <div class="md:col-span-2">
                                 <x-input-label for="descripcion" :value="__('Descripción del Tatuaje')" class="text-white" />

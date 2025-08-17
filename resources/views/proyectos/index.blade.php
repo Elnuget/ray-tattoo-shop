@@ -25,6 +25,7 @@
                             <thead>
                                 <tr class="border-b border-red-500/20">
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Usuario</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Descripción</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Total</th>
@@ -39,6 +40,9 @@
                                     <tr class="hover:bg-black/30 transition-colors duration-200">
                                         <td class="px-4 py-4 whitespace-nowrap text-sm text-white font-medium">
                                             {{ $proyecto->cliente }}
+                                        </td>
+                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">
+                                            {{ $proyecto->user ? $proyecto->user->name : 'Sin asignar' }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-gray-300 max-w-xs">
                                             <div class="truncate">{{ $proyecto->descripcion }}</div>

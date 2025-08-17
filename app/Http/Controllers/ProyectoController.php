@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proyecto;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProyectoController extends Controller
@@ -12,7 +13,7 @@ class ProyectoController extends Controller
      */
     public function index()
     {
-        $proyectos = Proyecto::with('pagos')->latest()->paginate(10);
+        $proyectos = Proyecto::with(['pagos', 'user'])->latest()->paginate(10);
         return view('proyectos.index', compact('proyectos'));
     }
 
@@ -21,7 +22,8 @@ class ProyectoController extends Controller
      */
     public function create()
     {
-        return view('proyectos.create');
+        $usuarios = User::orderBy('name')->get();
+        return view('proyectos.create', compact('usuarios'));
     }
 
     /**
@@ -30,6 +32,7 @@ class ProyectoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => ['nullable', 'exists:users,id'],
             'cliente' => ['required', 'string', 'max:255'],
             'descripcion' => ['required', 'string'],
             'sesiones' => ['required', 'integer', 'min:1'],
@@ -55,6 +58,7 @@ class ProyectoController extends Controller
      */
     public function show(Proyecto $proyecto)
     {
+        $proyecto->load(['user', 'pagos', 'imagenes']);
         return view('proyectos.show', compact('proyecto'));
     }
 
@@ -63,7 +67,8 @@ class ProyectoController extends Controller
      */
     public function edit(Proyecto $proyecto)
     {
-        return view('proyectos.edit', compact('proyecto'));
+        $usuarios = User::orderBy('name')->get();
+        return view('proyectos.edit', compact('proyecto', 'usuarios'));
     }
 
     /**
@@ -72,6 +77,7 @@ class ProyectoController extends Controller
     public function update(Request $request, Proyecto $proyecto)
     {
         $request->validate([
+            'user_id' => ['nullable', 'exists:users,id'],
             'cliente' => ['required', 'string', 'max:255'],
             'descripcion' => ['required', 'string'],
             'sesiones' => ['required', 'integer', 'min:1'],

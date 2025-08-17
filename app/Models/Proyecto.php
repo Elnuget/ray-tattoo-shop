@@ -15,6 +15,7 @@ class Proyecto extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'cliente',
         'descripcion',
         'sesiones',
@@ -119,6 +120,14 @@ class Proyecto extends Model
     public function setDepositoAttribute($value)
     {
         $this->attributes['deposito'] = round($value, 2);
+    }
+
+    /**
+     * Relación con el usuario del proyecto
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

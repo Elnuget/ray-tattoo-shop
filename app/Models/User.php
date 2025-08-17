@@ -53,4 +53,12 @@ class User extends Authenticatable
             'visible' => 'boolean',
         ];
     }
+
+    /**
+     * Relación con los proyectos asignados al usuario
+     */
+    public function proyectos()
+    {
+        return $this->hasMany(Proyecto::class);
+    }
 }

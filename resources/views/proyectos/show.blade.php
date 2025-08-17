@@ -33,6 +33,12 @@
                                 <label class="text-sm font-medium text-gray-300">Cliente</label>
                                 <p class="text-white text-lg">{{ $proyecto->cliente }}</p>
                             </div>
+                            @if($proyecto->user)
+                            <div>
+                                <label class="text-sm font-medium text-gray-300">Usuario Asignado</label>
+                                <p class="text-white text-lg">{{ $proyecto->user->name }}</p>
+                            </div>
+                            @endif
                             <div>
                                 <label class="text-sm font-medium text-gray-300">Descripción del Tatuaje</label>
                                 <p class="text-white">{{ $proyecto->descripcion }}</p>
