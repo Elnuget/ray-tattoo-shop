@@ -130,16 +130,12 @@
                                 <span class="text-white font-medium">${{ number_format($pago->proyecto->total, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center py-2 border-b border-gray-600/30">
-                                <span class="text-gray-300">Depósito Recibido:</span>
-                                <span class="text-blue-300 font-medium">${{ number_format($pago->proyecto->deposito, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-600/30">
                                 <span class="text-gray-300">Total Pagado:</span>
                                 <span class="text-green-300 font-medium">${{ number_format($pago->proyecto->total_pagado, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center py-2">
                                 <span class="text-gray-300">Saldo Pendiente:</span>
-                                <span class="text-red-300 font-medium">${{ number_format($pago->proyecto->saldo_real, 2) }}</span>
+                                <span class="text-red-300 font-medium">${{ number_format($pago->proyecto->saldo_pendiente, 2) }}</span>
                             </div>
                         </div>
                         
@@ -147,11 +143,11 @@
                         <div class="mt-4">
                             <div class="flex justify-between text-sm text-gray-300 mb-2">
                                 <span>Progreso de Pagos</span>
-                                <span>{{ number_format((($pago->proyecto->deposito + $pago->proyecto->total_pagado) / $pago->proyecto->total) * 100, 1) }}%</span>
+                                <span>{{ number_format(($pago->proyecto->total_pagado / $pago->proyecto->total) * 100, 1) }}%</span>
                             </div>
                             <div class="w-full bg-gray-700 rounded-full h-2">
                                 <div class="bg-gradient-to-r from-green-600 to-green-400 h-2 rounded-full" 
-                                     style="width: {{ (($pago->proyecto->deposito + $pago->proyecto->total_pagado) / $pago->proyecto->total) * 100 }}%"></div>
+                                     style="width: {{ ($pago->proyecto->total_pagado / $pago->proyecto->total) * 100 }}%"></div>
                             </div>
                         </div>
                     </div>

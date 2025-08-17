@@ -18,14 +18,10 @@
                         <span class="font-medium">Proyecto seleccionado:</span> 
                         {{ $proyectoSeleccionado->cliente }} - {{ $proyectoSeleccionado->descripcion }}
                     </p>
-                    <div class="text-sm text-gray-400 mt-2 grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div class="text-sm text-gray-400 mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
                         <div>
                             <span class="text-gray-500">Total:</span>
                             <span class="text-white">${{ number_format($proyectoSeleccionado->total, 2) }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Depósito:</span>
-                            <span class="text-green-300">${{ number_format($proyectoSeleccionado->deposito, 2) }}</span>
                         </div>
                         <div>
                             <span class="text-gray-500">Pagado:</span>
@@ -33,7 +29,7 @@
                         </div>
                         <div>
                             <span class="text-gray-500">Saldo:</span>
-                            <span class="text-red-300 font-medium">${{ number_format($proyectoSeleccionado->saldo_real, 2) }}</span>
+                            <span class="text-red-300 font-medium">${{ number_format($proyectoSeleccionado->saldo_pendiente, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -59,11 +55,10 @@
                                         <option value="{{ $proyecto->id }}" 
                                                 {{ old('proyecto_id', $proyectoSeleccionado?->id ?? request('proyecto_id')) == $proyecto->id ? 'selected' : '' }}
                                                 data-total="{{ $proyecto->total }}"
-                                                data-deposito="{{ $proyecto->deposito }}"
                                                 data-pagado="{{ $proyecto->total_pagado }}"
-                                                data-pendiente="{{ $proyecto->saldo_real }}">
+                                                data-pendiente="{{ $proyecto->saldo_pendiente }}">
                                             {{ $proyecto->cliente }} - {{ $proyecto->descripcion }} 
-                                            (Total: ${{ number_format($proyecto->total, 2) }}, Depósito: ${{ number_format($proyecto->deposito, 2) }}, Saldo: ${{ number_format($proyecto->saldo_real, 2) }})
+                                            (Total: ${{ number_format($proyecto->total, 2) }}, Pagado: ${{ number_format($proyecto->total_pagado, 2) }}, Saldo: ${{ number_format($proyecto->saldo_pendiente, 2) }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -71,14 +66,10 @@
                                 
                                 <!-- Información del proyecto seleccionado -->
                                 <div id="proyecto-info" class="mt-3 p-3 bg-blue-600/10 border border-blue-500/30 rounded-md hidden">
-                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                         <div>
                                             <span class="text-gray-300">Total del proyecto:</span>
                                             <span id="proyecto-total" class="text-white font-medium"></span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-300">Depósito recibido:</span>
-                                            <span id="proyecto-deposito" class="text-green-300 font-medium"></span>
                                         </div>
                                         <div>
                                             <span class="text-gray-300">Total pagado:</span>
@@ -164,7 +155,6 @@
             const proyectoSelect = document.getElementById('proyecto_id');
             const proyectoInfo = document.getElementById('proyecto-info');
             const proyectoTotal = document.getElementById('proyecto-total');
-            const proyectoDeposito = document.getElementById('proyecto-deposito');
             const proyectoPagado = document.getElementById('proyecto-pagado');
             const proyectoPendiente = document.getElementById('proyecto-pendiente');
             const montoInput = document.getElementById('monto');
@@ -176,12 +166,10 @@
                 
                 if (selectedOption && selectedOption.value) {
                     const total = parseFloat(selectedOption.dataset.total);
-                    const deposito = parseFloat(selectedOption.dataset.deposito);
                     const pagado = parseFloat(selectedOption.dataset.pagado);
                     const pendiente = parseFloat(selectedOption.dataset.pendiente);
 
                     proyectoTotal.textContent = '$' + total.toFixed(2);
-                    proyectoDeposito.textContent = '$' + deposito.toFixed(2);
                     proyectoPagado.textContent = '$' + pagado.toFixed(2);
                     proyectoPendiente.textContent = '$' + pendiente.toFixed(2);
                     

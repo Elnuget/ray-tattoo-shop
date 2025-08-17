@@ -37,9 +37,8 @@
                                     <p class="text-gray-300 text-sm">{{ $pago->proyecto->descripcion }}</p>
                                     <p class="text-gray-400 text-xs mt-1">
                                         Total: ${{ number_format($pago->proyecto->total, 2) }} | 
-                                        Depósito: ${{ number_format($pago->proyecto->deposito, 2) }} | 
                                         Pagado: ${{ number_format($pago->proyecto->total_pagado, 2) }} | 
-                                        Saldo: ${{ number_format($pago->proyecto->saldo_real, 2) }}
+                                        Saldo: ${{ number_format($pago->proyecto->saldo_pendiente, 2) }}
                                     </p>
                                 </div>
                                 <input type="hidden" name="proyecto_id" value="{{ $pago->proyecto_id }}">

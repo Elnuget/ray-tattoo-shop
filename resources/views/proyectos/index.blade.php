@@ -86,7 +86,7 @@
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap text-sm">
                                             @php
-                                                $saldo = $proyecto->saldo_real;
+                                                $saldo = $proyecto->saldo_pendiente;
                                             @endphp
                                             <span class="font-medium
                                                 @if($saldo > 0) text-red-300
@@ -118,7 +118,7 @@
                                                     Editar
                                                 </a>
                                             @endif
-                                            @if($proyecto->saldo_real > 0)
+                                            @if($proyecto->saldo_pendiente > 0)
                                                 <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" class="inline-flex items-center px-3 py-1 bg-green-600/20 text-green-300 rounded-md hover:bg-green-600/30 transition-colors duration-200 border border-green-500/30" title="Agregar pago para este proyecto">
                                                     Pago
                                                 </a>
