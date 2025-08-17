@@ -75,13 +75,20 @@ body {
     cursor: pointer;
     text-decoration: none;
     font-family: "My Font", sans-serif;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    line-height: 0.9 !important;
 }
 
-.navbar-brand:hover{ font-size: 1.25rem;
+.navbar-brand:hover{ 
     font-weight: bold;
     color: rgba(36, 36, 28 , 0.5);
     cursor: pointer;
-    text-decoration: none;}
+    text-decoration: none;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
 /* navbar part ends here here */
 
 
