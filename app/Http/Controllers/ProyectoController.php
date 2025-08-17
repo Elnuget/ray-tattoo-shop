@@ -15,33 +15,14 @@ class ProyectoController extends Controller
     {
         $query = Proyecto::with(['pagos', 'user']);
         
-        // Determinar el user_id a filtrar
-        $filtroUserId = null;
-        
-        if (auth()->user()->es_admin) {
-            // Los administradores pueden filtrar por cualquier usuario
-            if ($request->filled('user_id')) {
-                $filtroUserId = $request->user_id;
-            }
-        } else {
-            // Los usuarios no admin siempre ven solo sus proyectos
-            $filtroUserId = auth()->id();
+        // Los usuarios no administradores solo ven sus propios proyectos
+        if (!auth()->user()->es_admin) {
+            $query->where('user_id', auth()->id());
         }
         
-        // Aplicar filtro si hay uno definido
-        if ($filtroUserId) {
-            $query->where('user_id', $filtroUserId);
-        }
+        $proyectos = $query->latest()->paginate(10);
         
-        $proyectos = $query->latest()->paginate(10)->appends($request->query());
-        
-        // Obtener usuarios para el dropdown
-        $usuarios = User::orderBy('name')->get();
-        
-        // Determinar el usuario seleccionado por defecto
-        $usuarioSeleccionado = $request->filled('user_id') ? $request->user_id : auth()->id();
-        
-        return view('proyectos.index', compact('proyectos', 'usuarios', 'usuarioSeleccionado'));
+        return view('proyectos.index', compact('proyectos'));
     }
 
     /**
