@@ -5,6 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
+
         <title>{{ config('app.name', 'Rotto Tattoo Studio') }}</title>
 
         <!-- Fonts -->
