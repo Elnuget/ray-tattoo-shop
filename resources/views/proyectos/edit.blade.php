@@ -123,6 +123,25 @@
                                 <x-input-error :messages="$errors->get('deposito')" class="mt-2" />
                             </div>
 
+                            <!-- Método de Pago del Depósito -->
+                            <div>
+                                <x-input-label for="metodo_deposito" :value="__('Método de Pago del Depósito')" class="text-white" />
+                                <select id="metodo_deposito" name="metodo_deposito" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm">
+                                    @php
+                                        $metodoPagoActual = $proyecto->pagos()->where('descripcion', 'Depósito inicial del proyecto')->first()?->metodo ?? 'efectivo';
+                                    @endphp
+                                    <option value="efectivo" {{ old('metodo_deposito', $metodoPagoActual) == 'efectivo' ? 'selected' : '' }}>Efectivo</option>
+                                    <option value="transferencia" {{ old('metodo_deposito', $metodoPagoActual) == 'transferencia' ? 'selected' : '' }}>Transferencia Bancaria</option>
+                                    <option value="tarjeta_credito" {{ old('metodo_deposito', $metodoPagoActual) == 'tarjeta_credito' ? 'selected' : '' }}>Tarjeta de Crédito</option>
+                                    <option value="tarjeta_debito" {{ old('metodo_deposito', $metodoPagoActual) == 'tarjeta_debito' ? 'selected' : '' }}>Tarjeta de Débito</option>
+                                    <option value="paypal" {{ old('metodo_deposito', $metodoPagoActual) == 'paypal' ? 'selected' : '' }}>PayPal</option>
+                                    <option value="mercado_pago" {{ old('metodo_deposito', $metodoPagoActual) == 'mercado_pago' ? 'selected' : '' }}>Mercado Pago</option>
+                                    <option value="otro" {{ old('metodo_deposito', $metodoPagoActual) == 'otro' ? 'selected' : '' }}>Otro</option>
+                                </select>
+                                <p class="mt-1 text-sm text-gray-400">Solo se aplica si hay un depósito mayor a 0</p>
+                                <x-input-error :messages="$errors->get('metodo_deposito')" class="mt-2" />
+                            </div>
+
                             <!-- Precio por Sesión -->
                             <div>
                                 <x-input-label for="precio_por_sesion" :value="__('Precio por Sesión')" class="text-white" />

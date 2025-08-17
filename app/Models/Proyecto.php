@@ -24,7 +24,6 @@ class Proyecto extends Model
         'fecha_creacion',
         'estado',
         'total',
-        'deposito',
         'precio_por_sesion',
         'ubicacion_tatuaje',
         'tamaño',
@@ -42,7 +41,6 @@ class Proyecto extends Model
         'fecha_fin' => 'date',
         'fecha_creacion' => 'datetime',
         'total' => 'decimal:2',
-        'deposito' => 'decimal:2',
         'precio_por_sesion' => 'decimal:2',
         'sesiones' => 'integer',
     ];
@@ -87,7 +85,7 @@ class Proyecto extends Model
      */
     public function getSaldoPendienteAttribute()
     {
-        return $this->total - $this->deposito;
+        return $this->total - $this->total_pagado;
     }
 
     /**
@@ -112,14 +110,6 @@ class Proyecto extends Model
     public function setTotalAttribute($value)
     {
         $this->attributes['total'] = round($value, 2);
-    }
-
-    /**
-     * Mutator para el depósito
-     */
-    public function setDepositoAttribute($value)
-    {
-        $this->attributes['deposito'] = round($value, 2);
     }
 
     /**
@@ -179,10 +169,12 @@ class Proyecto extends Model
     }
 
     /**
-     * Accessor para calcular el saldo real (considerando depósito y pagos)
+     * Accessor para obtener el monto del depósito desde los pagos
      */
-    public function getSaldoRealAttribute()
+    public function getDepositoAttribute()
     {
-        return $this->total - $this->deposito - $this->total_pagado;
+        return $this->pagos()
+            ->where('descripcion', 'Depósito inicial del proyecto')
+            ->sum('monto');
     }
 }

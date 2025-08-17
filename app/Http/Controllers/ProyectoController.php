@@ -55,6 +55,7 @@ class ProyectoController extends Controller
             'estado' => ['required', 'in:pendiente,en_progreso,pausado,completado,cancelado'],
             'total' => ['required', 'numeric', 'min:0'],
             'deposito' => ['nullable', 'numeric', 'min:0', 'lte:total'],
+            'metodo_deposito' => ['nullable', 'in:efectivo,transferencia,tarjeta_credito,tarjeta_debito,paypal,mercado_pago,otro'],
             'precio_por_sesion' => ['nullable', 'numeric', 'min:0'],
             'ubicacion_tatuaje' => ['nullable', 'string', 'max:255'],
             'tamaño' => ['nullable', 'string', 'max:255'],
@@ -69,7 +70,22 @@ class ProyectoController extends Controller
             $data['user_id'] = auth()->id();
         }
 
-        Proyecto::create($data);
+        // Extraer el depósito y método antes de crear el proyecto
+        $deposito = $data['deposito'] ?? 0;
+        $metodoDeposito = $data['metodo_deposito'] ?? 'efectivo';
+        unset($data['deposito'], $data['metodo_deposito']); // Quitar del array ya que no existen en la tabla
+
+        $proyecto = Proyecto::create($data);
+
+        // Si hay un depósito, crear un pago automáticamente
+        if ($deposito > 0) {
+            $proyecto->pagos()->create([
+                'monto' => $deposito,
+                'metodo' => $metodoDeposito,
+                'descripcion' => 'Depósito inicial del proyecto',
+                'fecha_pago' => now()->toDateString(),
+            ]);
+        }
 
         return redirect()->route('proyectos.index')->with('success', 'Proyecto creado exitosamente.');
     }
@@ -117,6 +133,7 @@ class ProyectoController extends Controller
             'estado' => ['required', 'in:pendiente,en_progreso,pausado,completado,cancelado'],
             'total' => ['required', 'numeric', 'min:0'],
             'deposito' => ['nullable', 'numeric', 'min:0', 'lte:total'],
+            'metodo_deposito' => ['nullable', 'in:efectivo,transferencia,tarjeta_credito,tarjeta_debito,paypal,mercado_pago,otro'],
             'precio_por_sesion' => ['nullable', 'numeric', 'min:0'],
             'ubicacion_tatuaje' => ['nullable', 'string', 'max:255'],
             'tamaño' => ['nullable', 'string', 'max:255'],
@@ -131,7 +148,34 @@ class ProyectoController extends Controller
             unset($data['user_id']); // Remover user_id de los datos a actualizar
         }
 
+        // Manejar el depósito si se proporciona
+        $deposito = $data['deposito'] ?? 0;
+        $metodoDeposito = $data['metodo_deposito'] ?? 'efectivo';
+        unset($data['deposito'], $data['metodo_deposito']); // Quitar del array ya que no existen en la tabla
+
         $proyecto->update($data);
+
+        // Si hay un nuevo depósito y no existe un pago de depósito inicial, crearlo
+        if ($deposito > 0) {
+            $pagoDepositoExistente = $proyecto->pagos()
+                ->where('descripcion', 'Depósito inicial del proyecto')
+                ->first();
+            
+            if (!$pagoDepositoExistente) {
+                $proyecto->pagos()->create([
+                    'monto' => $deposito,
+                    'metodo' => $metodoDeposito,
+                    'descripcion' => 'Depósito inicial del proyecto',
+                    'fecha_pago' => now()->toDateString(),
+                ]);
+            } else {
+                // Actualizar el monto y método del depósito existente
+                $pagoDepositoExistente->update([
+                    'monto' => $deposito,
+                    'metodo' => $metodoDeposito
+                ]);
+            }
+        }
 
         return redirect()->route('proyectos.index')->with('success', 'Proyecto actualizado exitosamente.');
     }

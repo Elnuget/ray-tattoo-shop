@@ -139,7 +139,18 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-300">Depósito:</span>
-                                <span class="text-white">${{ number_format($proyecto->deposito, 2) }}</span>
+                                <div class="text-right">
+                                    <span class="text-white">${{ number_format($proyecto->deposito, 2) }}</span>
+                                    @if($proyecto->deposito > 0)
+                                        @php
+                                            $pagoDeposito = $proyecto->pagos()->where('descripcion', 'Depósito inicial del proyecto')->first();
+                                        @endphp
+                                        @if($pagoDeposito)
+                                            <br>
+                                            <span class="text-xs text-gray-400">{{ $pagoDeposito->metodo_nombre }}</span>
+                                        @endif
+                                    @endif
+                                </div>
                             </div>
                             <div class="border-t border-red-500/20 pt-2">
                                 <div class="flex justify-between">
@@ -156,6 +167,40 @@
                         </div>
                     </div>
 
+                    <!-- Historial de Pagos -->
+                    @if($proyecto->pagos->count() > 0)
+                    <div class="glass rounded-xl p-6 border border-red-500/20 bg-black/20 backdrop-blur-sm">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 0h4a2 2 0 002-2v-3a2 2 0 00-2-2H9z"></path>
+                            </svg>
+                            Historial de Pagos
+                        </h3>
+                        <div class="space-y-3">
+                            @foreach($proyecto->pagos()->orderBy('fecha_pago', 'desc')->get() as $pago)
+                                <div class="flex justify-between items-center p-3 bg-gray-800/30 rounded-lg border border-gray-600/20">
+                                    <div>
+                                        <p class="text-white font-medium">${{ number_format($pago->monto, 2) }}</p>
+                                        <p class="text-sm text-gray-400">{{ $pago->fecha_pago->format('d/m/Y') }}</p>
+                                        <p class="text-xs text-gray-500">{{ $pago->descripcion }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-600/20 text-blue-300">
+                                            {{ $pago->metodo_nombre }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-red-500/20">
+                            <div class="flex justify-between text-lg font-semibold">
+                                <span class="text-gray-300">Total Pagado:</span>
+                                <span class="text-green-400">${{ number_format($proyecto->total_pagado, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Acciones -->
                     <div class="glass rounded-xl p-6 border border-red-500/20 bg-black/20 backdrop-blur-sm">
                         <h3 class="text-lg font-semibold text-white mb-4">Acciones</h3>
@@ -165,6 +210,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                                 Ver Imágenes ({{ $proyecto->imagenes->count() }})
+                            </a>
+                            
+                            <a href="{{ route('pagos.create', ['proyecto' => $proyecto->id]) }}" class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600/20 text-green-300 rounded-lg font-medium hover:bg-green-600/30 transition-all duration-300 border border-green-500/30">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Registrar Pago
                             </a>
                             
                             <a href="{{ route('proyectos.edit', $proyecto) }}" class="w-full inline-flex items-center justify-center px-4 py-2 bg-yellow-600/20 text-yellow-300 rounded-lg font-medium hover:bg-yellow-600/30 transition-all duration-300 border border-yellow-500/30">
