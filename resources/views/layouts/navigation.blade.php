@@ -22,9 +22,11 @@
                 <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-nav-link>
-                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                    {{ __('Usuarios') }}
-                </x-nav-link>
+                @if(auth()->user()->es_admin)
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Usuarios') }}
+                    </x-nav-link>
+                @endif
                 <x-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')">
                     {{ __('Proyectos') }}
                 </x-nav-link>
@@ -42,7 +44,14 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-red-500/30 text-sm leading-4 font-medium rounded-lg text-white bg-black/20 hover:text-red-300 hover:bg-red-500/20 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            <div class="flex items-center">
+                                {{ Auth::user()->name }}
+                                @if(Auth::user()->es_admin)
+                                    <span class="ml-2 px-2 py-0.5 bg-red-600/20 text-red-300 text-xs rounded-full border border-red-500/30">
+                                        Admin
+                                    </span>
+                                @endif
+                            </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -89,9 +98,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                {{ __('Usuarios') }}
-            </x-responsive-nav-link>
+            @if(auth()->user()->es_admin)
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Usuarios') }}
+                </x-responsive-nav-link>
+            @endif
             <x-responsive-nav-link :href="route('proyectos.index')" :active="request()->routeIs('proyectos.*')">
                 {{ __('Proyectos') }}
             </x-responsive-nav-link>
@@ -106,7 +117,14 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-red-500/20 bg-black/20">
             <div class="px-4">
-                <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-base text-white flex items-center">
+                    {{ Auth::user()->name }}
+                    @if(Auth::user()->es_admin)
+                        <span class="ml-2 px-2 py-0.5 bg-red-600/20 text-red-300 text-xs rounded-full border border-red-500/30">
+                            Admin
+                        </span>
+                    @endif
+                </div>
                 <div class="font-medium text-sm text-white">{{ Auth::user()->email }}</div>
             </div>
 

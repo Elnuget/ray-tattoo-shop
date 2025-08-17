@@ -28,8 +28,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Rutas para el CRUD de usuarios
-    Route::resource('users', UserController::class);
+    // Rutas para el CRUD de usuarios - Solo administradores
+    Route::middleware('admin')->group(function () {
+        Route::resource('users', UserController::class);
+    });
     
     // Rutas para el CRUD de proyectos
     Route::resource('proyectos', ProyectoController::class);
