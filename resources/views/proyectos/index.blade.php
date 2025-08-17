@@ -27,9 +27,9 @@
                         </label>
                         <select id="userFilter" class="bg-black/40 border border-red-500/30 text-white rounded-lg px-4 py-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm">
                             <option value="">Todos los usuarios</option>
-                            <option value="sin_asignar">Sin asignar</option>
+                            <option value="sin_asignar" {{ !auth()->user()->visible ? 'selected' : '' }}>Sin asignar</option>
                             @foreach($usuarios as $usuario)
-                                <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                                <option value="{{ $usuario->id }}" {{ $usuario->id == auth()->id() ? 'selected' : '' }}>{{ $usuario->name }}</option>
                             @endforeach
                         </select>
                         <button id="clearFilter" class="px-4 py-2 bg-gray-600/20 text-gray-300 rounded-lg hover:bg-gray-600/30 transition-colors duration-200 border border-gray-500/30 text-sm">
@@ -227,10 +227,8 @@
                 filterProjects();
             });
             
-            // Filtrar al cargar la página si hay un valor preseleccionado
-            if (userFilter.value) {
-                filterProjects();
-            }
+            // Aplicar filtro inicial al cargar la página
+            filterProjects();
         });
     </script>
     @endif
