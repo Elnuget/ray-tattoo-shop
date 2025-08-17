@@ -57,14 +57,17 @@ class PagoController extends Controller
         // Obtener métodos de pago para el filtro
         $metodos = Pago::METODOS;
 
-        // Obtener usuarios para el filtro
-        $usuarios = \App\Models\User::where('visible', true)->orderBy('name')->get();
+        // Obtener usuarios para el filtro (todos los usuarios)
+        $usuarios = \App\Models\User::orderBy('name')->get();
+
+        // Usuario autenticado
+        $usuarioActual = auth()->user();
 
         // Estadísticas para el resumen
         $totalPagos = $query->sum('monto');
         $cantidadPagos = $query->count();
 
-        return view('pagos.index', compact('pagos', 'proyectos', 'metodos', 'usuarios', 'totalPagos', 'cantidadPagos'));
+        return view('pagos.index', compact('pagos', 'proyectos', 'metodos', 'usuarios', 'usuarioActual', 'totalPagos', 'cantidadPagos'));
     }
 
     /**

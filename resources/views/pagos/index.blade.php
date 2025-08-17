@@ -36,7 +36,9 @@
                         <select id="filtro-usuario" class="w-full px-3 py-2 bg-black/40 border border-red-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
                             <option value="">Todos los usuarios</option>
                             @foreach($usuarios as $usuario)
-                                <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                                <option value="{{ $usuario->id }}" {{ $usuarioActual && $usuarioActual->id == $usuario->id ? 'selected' : '' }}>
+                                    {{ $usuario->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -279,6 +281,9 @@
             filtroMetodo.addEventListener('change', aplicarFiltros);
             filtroCliente.addEventListener('input', aplicarFiltros);
             limpiarFiltros.addEventListener('click', limpiarTodosFiltros);
+
+            // Aplicar filtros al cargar la página (para el usuario preseleccionado)
+            aplicarFiltros();
         });
     </script>
 </x-app-layout>
