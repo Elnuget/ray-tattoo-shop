@@ -6,10 +6,15 @@ use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\GaleriaController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $artists = User::whereNotNull('descripcion')
+        ->where('descripcion', '!=', '')
+        ->get();
+    
+    return view('welcome', compact('artists'));
 });
 
 Route::get('/dashboard', function () {
