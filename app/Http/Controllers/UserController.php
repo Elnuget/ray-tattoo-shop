@@ -44,6 +44,7 @@ class UserController extends Controller
             'redes.twitter' => ['nullable', 'string', 'max:255'],
             'redes.tiktok' => ['nullable', 'string', 'max:255'],
             'es_admin' => ['nullable', 'boolean'],
+            'visible' => ['nullable', 'boolean'],
         ]);
 
         $userData = [
@@ -52,7 +53,8 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'descripcion' => $request->descripcion,
             'redes' => $request->redes ? array_filter($request->redes) : null,
-            'es_admin' => $request->boolean('es_admin', false),
+            'es_admin' => $request->has('es_admin') && $request->es_admin == '1',
+            'visible' => $request->has('visible') && $request->visible == '1',
         ];
 
         // Manejar la carga de foto
@@ -99,6 +101,7 @@ class UserController extends Controller
             'redes.twitter' => ['nullable', 'string', 'max:255'],
             'redes.tiktok' => ['nullable', 'string', 'max:255'],
             'es_admin' => ['nullable', 'boolean'],
+            'visible' => ['nullable', 'boolean'],
         ]);
 
         $userData = [
@@ -106,7 +109,8 @@ class UserController extends Controller
             'email' => $request->email,
             'descripcion' => $request->descripcion,
             'redes' => $request->redes ? array_filter($request->redes) : null,
-            'es_admin' => $request->boolean('es_admin', $user->es_admin),
+            'es_admin' => $request->has('es_admin') && $request->es_admin == '1',
+            'visible' => $request->has('visible') && $request->visible == '1',
         ];
 
         // Solo actualizar password si se proporciona

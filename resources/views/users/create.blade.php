@@ -82,6 +82,7 @@
                         <!-- Es Admin -->
                         <div>
                             <div class="flex items-center">
+                                <input type="hidden" name="es_admin" value="0">
                                 <input id="es_admin" type="checkbox" name="es_admin" value="1" 
                                        {{ old('es_admin') ? 'checked' : '' }}
                                        class="w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500 focus:ring-2">
@@ -91,6 +92,21 @@
                             </div>
                             <p class="text-gray-400 text-sm mt-1">Otorga permisos administrativos a este usuario</p>
                             <x-input-error :messages="$errors->get('es_admin')" class="mt-2" />
+                        </div>
+
+                        <!-- Visible -->
+                        <div>
+                            <div class="flex items-center">
+                                <input type="hidden" name="visible" value="0">
+                                <input id="visible" type="checkbox" name="visible" value="1" 
+                                       {{ old('visible', true) ? 'checked' : '' }}
+                                       class="w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500 focus:ring-2">
+                                <label for="visible" class="ml-2 text-sm font-medium text-white">
+                                    Visible en la página principal
+                                </label>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-1">Si está marcado, este artista aparecerá en la sección "Nuestros Artistas"</p>
+                            <x-input-error :messages="$errors->get('visible')" class="mt-2" />
                         </div>
 
                         <!-- Contraseña -->

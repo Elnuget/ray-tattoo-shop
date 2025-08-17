@@ -25,6 +25,7 @@ class User extends Authenticatable
         'descripcion',
         'redes',
         'es_admin',
+        'visible',
     ];
 
     /**
@@ -49,6 +50,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'redes' => 'array',
             'es_admin' => 'boolean',
+            'visible' => 'boolean',
         ];
     }
 }
