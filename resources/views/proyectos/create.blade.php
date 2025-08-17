@@ -89,7 +89,7 @@
                             <div>
                                 <x-input-label for="fecha_inicio" :value="__('Fecha de Inicio')" class="text-white" />
                                 <x-text-input id="fecha_inicio" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
-                                              type="date" name="fecha_inicio" :value="old('fecha_inicio')" />
+                                              type="date" name="fecha_inicio" :value="old('fecha_inicio', date('Y-m-d'))" />
                                 <x-input-error :messages="$errors->get('fecha_inicio')" class="mt-2" />
                             </div>
 
@@ -97,7 +97,7 @@
                             <div>
                                 <x-input-label for="fecha_fin" :value="__('Fecha de Finalización')" class="text-white" />
                                 <x-text-input id="fecha_fin" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
-                                              type="date" name="fecha_fin" :value="old('fecha_fin')" />
+                                              type="date" name="fecha_fin" :value="old('fecha_fin', date('Y-m-d'))" />
                                 <x-input-error :messages="$errors->get('fecha_fin')" class="mt-2" />
                             </div>
 
@@ -126,7 +126,8 @@
                             <div>
                                 <x-input-label for="precio_por_sesion" :value="__('Precio por Sesión')" class="text-white" />
                                 <x-text-input id="precio_por_sesion" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
-                                              type="number" name="precio_por_sesion" :value="old('precio_por_sesion')" step="0.01" min="0" />
+                                              type="number" name="precio_por_sesion" :value="old('precio_por_sesion')" step="0.01" min="0" readonly />
+                                <p class="mt-1 text-sm text-gray-400">Se calcula automáticamente: Precio Total ÷ Número de Sesiones</p>
                                 <x-input-error :messages="$errors->get('precio_por_sesion')" class="mt-2" />
                             </div>
 
@@ -182,4 +183,31 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalInput = document.getElementById('total');
+            const sesionesInput = document.getElementById('sesiones');
+            const precioSesionInput = document.getElementById('precio_por_sesion');
+            
+            function calcularPrecioPorSesion() {
+                const total = parseFloat(totalInput.value) || 0;
+                const sesiones = parseInt(sesionesInput.value) || 1;
+                
+                if (total > 0 && sesiones > 0) {
+                    const precioPorSesion = (total / sesiones).toFixed(2);
+                    precioSesionInput.value = precioPorSesion;
+                } else {
+                    precioSesionInput.value = '';
+                }
+            }
+            
+            // Calcular cuando cambien los valores
+            totalInput.addEventListener('input', calcularPrecioPorSesion);
+            sesionesInput.addEventListener('input', calcularPrecioPorSesion);
+            
+            // Calcular al cargar la página si hay valores
+            calcularPrecioPorSesion();
+        });
+    </script>
 </x-app-layout>
