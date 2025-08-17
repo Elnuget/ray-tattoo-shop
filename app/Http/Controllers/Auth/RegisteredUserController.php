@@ -33,13 +33,31 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
+            'redes' => ['nullable', 'array'],
+            'redes.instagram' => ['nullable', 'string', 'max:255'],
+            'redes.facebook' => ['nullable', 'string', 'max:255'],
+            'redes.twitter' => ['nullable', 'string', 'max:255'],
+            'redes.tiktok' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user = User::create([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ]);
+            'descripcion' => $request->descripcion,
+            'redes' => $request->redes ? array_filter($request->redes) : null,
+            'es_admin' => false, // Los nuevos usuarios no son admin por defecto
+        ];
+
+        // Manejar la carga de foto
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('users/fotos', 'public');
+            $userData['foto'] = $fotoPath;
+        }
+
+        $user = User::create($userData);
 
         event(new Registered($user));
 

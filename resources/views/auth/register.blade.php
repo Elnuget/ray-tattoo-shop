@@ -5,7 +5,7 @@
         <p class="text-gray-300">Únete a la familia Ray Tattoo Shop</p>
     </div>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-6">
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <!-- Name -->
@@ -35,6 +35,73 @@
                          autocomplete="username"
                          placeholder="tu@email.com" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <!-- Foto de Perfil (Opcional) -->
+        <div>
+            <x-input-label for="foto" :value="__('Foto de Perfil (Opcional)')" class="text-red-400 font-semibold" />
+            <input id="foto" 
+                   class="block mt-1 w-full px-4 py-3 bg-black/80 border border-red-500/30 rounded-lg text-white file:bg-red-600/20 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-lg file:hover:bg-red-600/30 transition-all duration-300" 
+                   type="file" 
+                   name="foto" 
+                   accept="image/*" />
+            <p class="text-gray-400 text-sm mt-1">JPG, PNG, GIF. Máximo 2MB</p>
+            <x-input-error :messages="$errors->get('foto')" class="mt-2" />
+        </div>
+
+        <!-- Descripción (Opcional) -->
+        <div>
+            <x-input-label for="descripcion" :value="__('Sobre ti (Opcional)')" class="text-red-400 font-semibold" />
+            <textarea id="descripcion" 
+                      name="descripcion" 
+                      rows="3" 
+                      class="block mt-1 w-full px-4 py-3 bg-black/80 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 transition-all duration-300 hover:border-red-400 resize-none"
+                      placeholder="Cuéntanos sobre ti, tus gustos en tatuajes, experiencia...">{{ old('descripcion') }}</textarea>
+            <x-input-error :messages="$errors->get('descripcion')" class="mt-2" />
+        </div>
+
+        <!-- Redes Sociales (Opcional) -->
+        <div>
+            <x-input-label :value="__('Redes Sociales (Opcional)')" class="text-red-400 font-semibold mb-3" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="redes_instagram" class="block text-sm font-medium text-gray-300 mb-1">Instagram</label>
+                    <x-text-input id="redes_instagram" 
+                                  class="block w-full px-4 py-2 bg-black/80 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 transition-all duration-300 hover:border-red-400" 
+                                  type="text" 
+                                  name="redes[instagram]" 
+                                  :value="old('redes.instagram')" 
+                                  placeholder="@tu_usuario" />
+                </div>
+                <div>
+                    <label for="redes_facebook" class="block text-sm font-medium text-gray-300 mb-1">Facebook</label>
+                    <x-text-input id="redes_facebook" 
+                                  class="block w-full px-4 py-2 bg-black/80 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 transition-all duration-300 hover:border-red-400" 
+                                  type="text" 
+                                  name="redes[facebook]" 
+                                  :value="old('redes.facebook')" 
+                                  placeholder="tu_perfil" />
+                </div>
+                <div>
+                    <label for="redes_twitter" class="block text-sm font-medium text-gray-300 mb-1">Twitter</label>
+                    <x-text-input id="redes_twitter" 
+                                  class="block w-full px-4 py-2 bg-black/80 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 transition-all duration-300 hover:border-red-400" 
+                                  type="text" 
+                                  name="redes[twitter]" 
+                                  :value="old('redes.twitter')" 
+                                  placeholder="@tu_usuario" />
+                </div>
+                <div>
+                    <label for="redes_tiktok" class="block text-sm font-medium text-gray-300 mb-1">TikTok</label>
+                    <x-text-input id="redes_tiktok" 
+                                  class="block w-full px-4 py-2 bg-black/80 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 transition-all duration-300 hover:border-red-400" 
+                                  type="text" 
+                                  name="redes[tiktok]" 
+                                  :value="old('redes.tiktok')" 
+                                  placeholder="@tu_usuario" />
+                </div>
+            </div>
+            <x-input-error :messages="$errors->get('redes')" class="mt-2" />
         </div>
 
         <!-- Password -->

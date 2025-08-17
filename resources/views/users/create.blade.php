@@ -14,7 +14,7 @@
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm overflow-hidden">
                 <div class="p-8">
-                    <form method="POST" action="{{ route('users.store') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <!-- Nombre -->
@@ -31,6 +31,66 @@
                             <x-text-input id="email" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
                                           type="email" name="email" :value="old('email')" required autocomplete="username" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        </div>
+
+                        <!-- Foto de Perfil -->
+                        <div>
+                            <x-input-label for="foto" :value="__('Foto de Perfil')" class="text-white" />
+                            <input id="foto" class="block mt-1 w-full bg-black/30 border border-red-500/30 text-white file:bg-red-600/20 file:border-0 file:text-white file:px-4 file:py-2 file:rounded-lg file:hover:bg-red-600/30 transition-all duration-300" 
+                                   type="file" name="foto" accept="image/*" />
+                            <p class="text-gray-400 text-sm mt-1">Formatos aceptados: JPG, PNG, GIF. Máximo 2MB</p>
+                            <x-input-error :messages="$errors->get('foto')" class="mt-2" />
+                        </div>
+
+                        <!-- Descripción -->
+                        <div>
+                            <x-input-label for="descripcion" :value="__('Descripción')" class="text-white" />
+                            <textarea id="descripcion" name="descripcion" rows="4" 
+                                      class="block mt-1 w-full bg-black/30 border border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500 rounded-md resize-none"
+                                      placeholder="Cuéntanos sobre ti, tus especialidades, experiencia...">{{ old('descripcion') }}</textarea>
+                            <x-input-error :messages="$errors->get('descripcion')" class="mt-2" />
+                        </div>
+
+                        <!-- Redes Sociales -->
+                        <div>
+                            <x-input-label :value="__('Redes Sociales')" class="text-white mb-3" />
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="redes_instagram" class="block text-sm font-medium text-gray-300">Instagram</label>
+                                    <x-text-input id="redes_instagram" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
+                                                  type="text" name="redes[instagram]" :value="old('redes.instagram')" placeholder="@tu_usuario" />
+                                </div>
+                                <div>
+                                    <label for="redes_facebook" class="block text-sm font-medium text-gray-300">Facebook</label>
+                                    <x-text-input id="redes_facebook" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
+                                                  type="text" name="redes[facebook]" :value="old('redes.facebook')" placeholder="facebook.com/tu_perfil" />
+                                </div>
+                                <div>
+                                    <label for="redes_twitter" class="block text-sm font-medium text-gray-300">Twitter</label>
+                                    <x-text-input id="redes_twitter" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
+                                                  type="text" name="redes[twitter]" :value="old('redes.twitter')" placeholder="@tu_usuario" />
+                                </div>
+                                <div>
+                                    <label for="redes_tiktok" class="block text-sm font-medium text-gray-300">TikTok</label>
+                                    <x-text-input id="redes_tiktok" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500" 
+                                                  type="text" name="redes[tiktok]" :value="old('redes.tiktok')" placeholder="@tu_usuario" />
+                                </div>
+                            </div>
+                            <x-input-error :messages="$errors->get('redes')" class="mt-2" />
+                        </div>
+
+                        <!-- Es Admin -->
+                        <div>
+                            <div class="flex items-center">
+                                <input id="es_admin" type="checkbox" name="es_admin" value="1" 
+                                       {{ old('es_admin') ? 'checked' : '' }}
+                                       class="w-4 h-4 text-red-600 bg-black/30 border-red-500/30 rounded focus:ring-red-500 focus:ring-2">
+                                <label for="es_admin" class="ml-2 text-sm font-medium text-white">
+                                    Rol de Administrador
+                                </label>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-1">Otorga permisos administrativos a este usuario</p>
+                            <x-input-error :messages="$errors->get('es_admin')" class="mt-2" />
                         </div>
 
                         <!-- Contraseña -->

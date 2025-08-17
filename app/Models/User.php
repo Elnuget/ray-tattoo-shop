@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'foto',
+        'descripcion',
+        'redes',
+        'es_admin',
     ];
 
     /**
@@ -43,6 +47,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'redes' => 'array',
+            'es_admin' => 'boolean',
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -35,13 +36,32 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
+            'redes' => ['nullable', 'array'],
+            'redes.instagram' => ['nullable', 'string', 'max:255'],
+            'redes.facebook' => ['nullable', 'string', 'max:255'],
+            'redes.twitter' => ['nullable', 'string', 'max:255'],
+            'redes.tiktok' => ['nullable', 'string', 'max:255'],
+            'es_admin' => ['nullable', 'boolean'],
         ]);
 
-        User::create([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ]);
+            'descripcion' => $request->descripcion,
+            'redes' => $request->redes ? array_filter($request->redes) : null,
+            'es_admin' => $request->boolean('es_admin', false),
+        ];
+
+        // Manejar la carga de foto
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('users/fotos', 'public');
+            $userData['foto'] = $fotoPath;
+        }
+
+        User::create($userData);
 
         return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
     }
@@ -71,13 +91,39 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'descripcion' => ['nullable', 'string', 'max:1000'],
+            'redes' => ['nullable', 'array'],
+            'redes.instagram' => ['nullable', 'string', 'max:255'],
+            'redes.facebook' => ['nullable', 'string', 'max:255'],
+            'redes.twitter' => ['nullable', 'string', 'max:255'],
+            'redes.tiktok' => ['nullable', 'string', 'max:255'],
+            'es_admin' => ['nullable', 'boolean'],
         ]);
 
-        $user->update([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password ? Hash::make($request->password) : $user->password,
-        ]);
+            'descripcion' => $request->descripcion,
+            'redes' => $request->redes ? array_filter($request->redes) : null,
+            'es_admin' => $request->boolean('es_admin', $user->es_admin),
+        ];
+
+        // Solo actualizar password si se proporciona
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        // Manejar la carga de nueva foto
+        if ($request->hasFile('foto')) {
+            // Eliminar foto anterior si existe
+            if ($user->foto && \Storage::disk('public')->exists($user->foto)) {
+                \Storage::disk('public')->delete($user->foto);
+            }
+            $userData['foto'] = $request->file('foto')->store('users/fotos', 'public');
+        }
+
+        $user->update($userData);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
     }
