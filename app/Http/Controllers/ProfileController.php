@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,15 +27,42 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validatedData = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Manejar la subida de la foto de perfil
+        if ($request->hasFile('foto')) {
+            // Eliminar la foto anterior si existe
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
+            // Subir la nueva foto
+            $path = $request->file('foto')->store('profile-photos', 'public');
+            $validatedData['foto'] = $path;
         }
 
-        $request->user()->save();
+        // Filtrar redes sociales vacías
+        if (isset($validatedData['redes'])) {
+            $validatedData['redes'] = array_filter($validatedData['redes'], function($value) {
+                return !empty(trim($value));
+            });
+            
+            // Si no hay redes sociales, establecer como null
+            if (empty($validatedData['redes'])) {
+                $validatedData['redes'] = null;
+            }
+        }
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        $user->fill($validatedData);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('success', 'Perfil actualizado correctamente.');
     }
 
     /**
@@ -47,6 +75,11 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        // Eliminar la foto de perfil si existe
+        if ($user->foto) {
+            Storage::disk('public')->delete($user->foto);
+        }
 
         Auth::logout();
 
