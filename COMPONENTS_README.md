@@ -1,4 +1,4 @@
-# Componentes de Ray Tattoo Shop
+# Componentes de Rotto Tattoo Studio
 
 Este proyecto ha sido separado en componentes reutilizables para mejorar la organización y mantenibilidad del código.
 

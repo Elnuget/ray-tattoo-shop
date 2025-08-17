@@ -85,7 +85,7 @@
                                 allowfullscreen="" 
                                 loading="lazy" 
                                 referrerpolicy="no-referrer-when-downgrade"
-                                title="Ubicación de Ray Tattoo Studio"></iframe>
+                                title="Ubicación de Rotto Tattoo Studio"></iframe>
                     </div>
                 </div>
             </div>

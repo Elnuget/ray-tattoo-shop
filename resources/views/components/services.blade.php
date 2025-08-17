@@ -6,7 +6,7 @@
             @include('components.service-card', [
                 'title' => 'TATTOO',
                 'icon' => 'images/tattoo.png',
-                'description' => '¡Ten estilo en Ray Tattoo! Nuestros artistas experimentados trabajarán contigo para crear una pieza única que refleje tu personalidad y estilo.',
+                'description' => '¡Ten estilo en Rotto Tattoo Studio! Nuestros artistas experimentados trabajarán contigo para crear una pieza única que refleje tu personalidad y estilo.',
                 'animation' => 'fade-right'
             ])
 
@@ -20,7 +20,7 @@
             @include('components.service-card', [
                 'title' => 'COVER UP',
                 'icon' => 'images/coverup.png',
-                'description' => '¡Cubre tu pasado con Ray Tattoo! Nuestros artistas especializados en cover-up transforman tatuajes antiguos en nuevas y hermosas obras de arte. Si quieres cambiar tu tatuaje, creemos un nuevo look.',
+                'description' => '¡Cubre tu pasado con Rotto Tattoo Studio! Nuestros artistas especializados en cover-up transforman tatuajes antiguos en nuevas y hermosas obras de arte. Si quieres cambiar tu tatuaje, creemos un nuevo look.',
                 'animation' => 'fade-left'
             ])
         </div>

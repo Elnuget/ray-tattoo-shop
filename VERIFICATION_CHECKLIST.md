@@ -1,4 +1,4 @@
-# ✅ Lista de Verificación - Ray Tattoo Shop
+# ✅ Lista de Verificación - Rotto Tattoo Studio
 
 ## Archivos Principales ✅
 

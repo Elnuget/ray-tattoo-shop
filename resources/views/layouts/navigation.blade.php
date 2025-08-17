@@ -12,7 +12,7 @@
                             </svg>
                         </div>
                         <span class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white">
-                            Ray Tattoo Shop
+                            Rotto Tattoo Studio
                         </span>
                     </a>
                 </div>

@@ -1,4 +1,4 @@
-// Ray Tattoo Shop - Responsive JavaScript Enhancements
+// Rotto Tattoo Studio - Responsive JavaScript Enhancements
 
 document.addEventListener('DOMContentLoaded', function() {
     

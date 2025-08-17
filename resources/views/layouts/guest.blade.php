@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Ray Tattoo Shop') }}</title>
+        <title>{{ config('app.name', 'Rotto Tattoo Studio') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -31,7 +31,7 @@
                             </svg>
                         </div>
                         <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white">
-                            Ray Tattoo Shop
+                            Rotto Tattoo Studio
                         </h1>
                         <p class="text-gray-300 mt-2 font-medium">Arte en tu piel</p>
                     </a>
@@ -46,7 +46,7 @@
 
                 <!-- Footer -->
                 <div class="mt-8 text-center text-gray-400 text-sm">
-                    <p>&copy; {{ date('Y') }} Ray Tattoo Shop. Todos los derechos reservados.</p>
+                    <p>&copy; {{ date('Y') }} Rotto Tattoo Studio. Todos los derechos reservados.</p>
                 </div>
             </div>
         </div>
