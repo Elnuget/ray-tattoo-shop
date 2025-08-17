@@ -18,10 +18,31 @@
                 </div>
             @endif
 
+            @if(auth()->user()->es_admin && $usuarios->count() > 0)
+                <!-- Filtro de Usuario -->
+                <div class="mb-6 glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm p-6">
+                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                        <label class="text-sm font-medium text-gray-300 whitespace-nowrap">
+                            Filtrar por usuario:
+                        </label>
+                        <select id="userFilter" class="bg-black/40 border border-red-500/30 text-white rounded-lg px-4 py-2 focus:ring-red-500 focus:border-red-500 backdrop-blur-sm">
+                            <option value="">Todos los usuarios</option>
+                            <option value="sin_asignar">Sin asignar</option>
+                            @foreach($usuarios as $usuario)
+                                <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                            @endforeach
+                        </select>
+                        <button id="clearFilter" class="px-4 py-2 bg-gray-600/20 text-gray-300 rounded-lg hover:bg-gray-600/30 transition-colors duration-200 border border-gray-500/30 text-sm">
+                            Limpiar filtro
+                        </button>
+                    </div>
+                </div>
+            @endif
+
             <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm overflow-hidden">
                 <div class="p-6">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full">
+                        <table class="min-w-full" id="proyectosTable">
                             <thead>
                                 <tr class="border-b border-red-500/20">
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
@@ -35,9 +56,11 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-red-500/20">
+                            <tbody class="divide-y divide-red-500/20" id="proyectosTableBody">
                                 @forelse($proyectos as $proyecto)
-                                    <tr class="hover:bg-black/30 transition-colors duration-200">
+                                    <tr class="hover:bg-black/30 transition-colors duration-200 proyecto-row" 
+                                        data-user-id="{{ $proyecto->user_id ?? 'sin_asignar' }}"
+                                        data-user-name="{{ $proyecto->user ? strtolower($proyecto->user->name) : 'sin asignar' }}">
                                         <td class="px-4 py-4 whitespace-nowrap text-sm text-white font-medium">
                                             {{ $proyecto->cliente }}
                                         </td>
@@ -139,4 +162,76 @@
             </div>
         </div>
     </div>
+
+    @if(auth()->user()->es_admin && $usuarios->count() > 0)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userFilter = document.getElementById('userFilter');
+            const clearFilter = document.getElementById('clearFilter');
+            const proyectoRows = document.querySelectorAll('.proyecto-row');
+            
+            function filterProjects() {
+                const selectedUserId = userFilter.value;
+                let visibleCount = 0;
+                
+                proyectoRows.forEach(row => {
+                    const rowUserId = row.getAttribute('data-user-id');
+                    
+                    if (selectedUserId === '' || rowUserId === selectedUserId) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Mostrar mensaje si no hay resultados
+                updateEmptyState(visibleCount === 0);
+            }
+            
+            function updateEmptyState(isEmpty) {
+                const tbody = document.getElementById('proyectosTableBody');
+                let emptyRow = document.getElementById('empty-filter-row');
+                
+                if (isEmpty && userFilter.value !== '') {
+                    // Crear mensaje de "no hay resultados" si no existe
+                    if (!emptyRow) {
+                        emptyRow = document.createElement('tr');
+                        emptyRow.id = 'empty-filter-row';
+                        emptyRow.innerHTML = `
+                            <td colspan="9" class="px-4 py-8 text-center text-gray-400">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <p>No se encontraron proyectos para el usuario seleccionado</p>
+                                    <button onclick="document.getElementById('clearFilter').click()" class="mt-2 text-red-400 hover:text-red-300 cursor-pointer">
+                                        Limpiar filtro
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(emptyRow);
+                    }
+                    emptyRow.style.display = '';
+                } else if (emptyRow) {
+                    emptyRow.style.display = 'none';
+                }
+            }
+            
+            // Event listeners
+            userFilter.addEventListener('change', filterProjects);
+            
+            clearFilter.addEventListener('click', function() {
+                userFilter.value = '';
+                filterProjects();
+            });
+            
+            // Filtrar al cargar la página si hay un valor preseleccionado
+            if (userFilter.value) {
+                filterProjects();
+            }
+        });
+    </script>
+    @endif
 </x-app-layout>

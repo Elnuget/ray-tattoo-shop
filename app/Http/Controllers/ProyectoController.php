@@ -22,7 +22,13 @@ class ProyectoController extends Controller
         
         $proyectos = $query->latest()->paginate(10);
         
-        return view('proyectos.index', compact('proyectos'));
+        // Obtener lista de usuarios para el filtro (solo si es admin)
+        $usuarios = collect();
+        if (auth()->user()->es_admin) {
+            $usuarios = User::select('id', 'name')->orderBy('name')->get();
+        }
+        
+        return view('proyectos.index', compact('proyectos', 'usuarios'));
     }
 
     /**
