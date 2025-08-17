@@ -18,43 +18,40 @@
                 </div>
             @endif
 
-            <!-- Filtros -->
-            <div class="mb-6 glass rounded-xl p-4 border border-red-500/20 bg-black/20 backdrop-blur-sm">
-                <form method="GET" action="{{ route('pagos.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Proyecto</label>
-                        <select name="proyecto_id" class="block w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md">
-                            <option value="">Todos los proyectos</option>
-                            @foreach($proyectos as $proyecto)
-                                <option value="{{ $proyecto->id }}" {{ request('proyecto_id') == $proyecto->id ? 'selected' : '' }}>
-                                    {{ $proyecto->cliente }} - {{ Str::limit($proyecto->descripcion, 30) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Método de Pago</label>
-                        <select name="metodo" class="block w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md">
-                            <option value="">Todos los métodos</option>
-                            @foreach(\App\Models\Pago::METODOS as $key => $value)
-                                <option value="{{ $key }}" {{ request('metodo') == $key ? 'selected' : '' }}>
-                                    {{ $value }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Fecha Desde</label>
-                        <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}" 
-                               class="block w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md">
-                    </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full px-4 py-2 bg-red-600/20 text-red-300 rounded-md hover:bg-red-600/30 transition-colors duration-200 border border-red-500/30">
-                            Filtrar
-                        </button>
-                    </div>
-                </form>
+            <!-- Tarjeta Total General -->
+            <div class="mb-6 glass rounded-xl p-6 border border-red-500/20 bg-black/20 backdrop-blur-sm">
+                <div class="text-center">
+                    <h3 class="text-lg font-medium text-gray-300 mb-2">Total General de Pagos</h3>
+                    <p class="text-4xl font-bold text-white">${{ number_format($pagos->sum('monto'), 2) }}</p>
+                    <p class="text-sm text-gray-400 mt-1">{{ $pagos->count() }} transacciones</p>
+                </div>
             </div>
+
+            <!-- Tarjetas por Método de Pago -->
+            @if($pagos->count() > 0)
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @php
+                        $pagosPorMetodo = $pagos->groupBy('metodo');
+                    @endphp
+                    
+                    @foreach($pagosPorMetodo as $metodo => $pagosMetodo)
+                        <div class="glass rounded-lg p-4 border border-red-500/20 bg-black/20 backdrop-blur-sm">
+                            <div class="text-center">
+                                <h4 class="text-sm font-medium mb-2
+                                    @if($metodo === 'efectivo') text-green-300
+                                    @elseif($metodo === 'transferencia') text-blue-300
+                                    @elseif(str_contains($metodo, 'tarjeta')) text-purple-300
+                                    @else text-gray-300
+                                    @endif">
+                                    {{ \App\Models\Pago::METODOS[$metodo] ?? ucfirst($metodo) }}
+                                </h4>
+                                <p class="text-2xl font-bold text-white">${{ number_format($pagosMetodo->sum('monto'), 2) }}</p>
+                                <p class="text-xs text-gray-400 mt-1">{{ $pagosMetodo->count() }} pagos</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
 
             <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm overflow-hidden">
                 <div class="p-6">
@@ -137,26 +134,6 @@
                     @if($pagos->hasPages())
                         <div class="mt-6">
                             {{ $pagos->links() }}
-                        </div>
-                    @endif
-
-                    <!-- Resumen de Totales -->
-                    @if($pagos->count() > 0)
-                        <div class="mt-6 pt-6 border-t border-red-500/20">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-green-600/10 border border-green-500/30 rounded-lg p-4">
-                                    <h4 class="text-green-300 font-medium">Total de Pagos</h4>
-                                    <p class="text-2xl font-bold text-white">${{ number_format($pagos->sum('monto'), 2) }}</p>
-                                </div>
-                                <div class="bg-blue-600/10 border border-blue-500/30 rounded-lg p-4">
-                                    <h4 class="text-blue-300 font-medium">Número de Transacciones</h4>
-                                    <p class="text-2xl font-bold text-white">{{ $pagos->count() }}</p>
-                                </div>
-                                <div class="bg-purple-600/10 border border-purple-500/30 rounded-lg p-4">
-                                    <h4 class="text-purple-300 font-medium">Promedio por Pago</h4>
-                                    <p class="text-2xl font-bold text-white">${{ number_format($pagos->avg('monto'), 2) }}</p>
-                                </div>
-                            </div>
                         </div>
                     @endif
                 </div>
