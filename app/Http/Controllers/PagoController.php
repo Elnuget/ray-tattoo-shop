@@ -75,21 +75,30 @@ class PagoController extends Controller
      */
     public function create(Request $request): View
     {
-        // Obtener proyectos activos con saldo pendiente (considerando depósito)
-        $proyectos = Proyecto::with('pagos')
-            ->whereIn('estado', ['planificacion', 'en_progreso', 'pausado'])
+        // Obtener TODOS los proyectos con sus usuarios y pagos (sin filtros de usuario)
+        // Incluir todos los estados excepto cancelado, ordenados para mostrar primero los activos
+        $proyectos = Proyecto::with(['pagos', 'user'])
+            ->whereNotIn('estado', ['cancelado'])
+            ->orderByRaw("CASE 
+                WHEN estado = 'en_progreso' THEN 1 
+                WHEN estado = 'planificacion' THEN 2 
+                WHEN estado = 'pausado' THEN 3 
+                WHEN estado = 'completado' THEN 4 
+                ELSE 5 
+            END")
             ->orderBy('cliente')
             ->get()
             ->filter(function ($proyecto) {
-                return $proyecto->saldo_real > 0;
+                // Solo mostrar proyectos que tengan saldo pendiente mayor a 0
+                return $proyecto->saldo_pendiente > 0;
             });
 
         $metodos = Pago::METODOS;
 
-        // Si viene un proyecto_id específico, verificar que exista y tenga saldo pendiente
+        // Si viene un proyecto_id específico, verificar que exista
         $proyectoSeleccionado = null;
         if ($request->has('proyecto_id')) {
-            $proyectoSeleccionado = Proyecto::with('pagos')->find($request->proyecto_id);
+            $proyectoSeleccionado = Proyecto::with(['pagos', 'user'])->find($request->proyecto_id);
             // Si el proyecto no está en la lista filtrada, agregarlo
             if ($proyectoSeleccionado && !$proyectos->contains('id', $proyectoSeleccionado->id)) {
                 $proyectos->push($proyectoSeleccionado);

@@ -50,7 +50,7 @@
                             <div class="md:col-span-2">
                                 <x-input-label for="proyecto_id" :value="__('Proyecto')" class="text-white" />
                                 <select id="proyecto_id" name="proyecto_id" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm" required>
-                                    <option value="">Seleccionar proyecto</option>
+                                    <option value="">Seleccionar proyecto ({{ $proyectos->count() }} disponibles)</option>
                                     @foreach($proyectos as $proyecto)
                                         <option value="{{ $proyecto->id }}" 
                                                 {{ old('proyecto_id', $proyectoSeleccionado?->id ?? request('proyecto_id')) == $proyecto->id ? 'selected' : '' }}
@@ -58,16 +58,41 @@
                                                 data-pagado="{{ $proyecto->total_pagado }}"
                                                 data-pendiente="{{ $proyecto->saldo_pendiente }}"
                                                 data-cliente="{{ $proyecto->cliente }}"
-                                                data-descripcion="{{ $proyecto->descripcion }}">
-                                            {{ $proyecto->cliente }} - {{ $proyecto->descripcion }} 
-                                            (Total: ${{ number_format((float)$proyecto->total, 2) }}, Pagado: ${{ number_format((float)$proyecto->total_pagado, 2) }}, Saldo: ${{ number_format((float)$proyecto->saldo_pendiente, 2) }})
+                                                data-descripcion="{{ $proyecto->descripcion }}"
+                                                data-usuario="{{ $proyecto->user?->name ?? 'Sin asignar' }}">
+                                            {{ $proyecto->cliente }} - {{ $proyecto->descripcion }}
+                                            @if($proyecto->user)
+                                                ({{ $proyecto->user->name }})
+                                            @else
+                                                (Sin asignar)
+                                            @endif
+                                            - Total: ${{ number_format((float)$proyecto->total, 2) }}, Saldo: ${{ number_format((float)$proyecto->saldo_pendiente, 2) }}
                                         </option>
                                     @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('proyecto_id')" class="mt-2" />
                                 
+                                @if($proyectos->count() === 0)
+                                    <div class="mt-2 p-3 bg-yellow-600/10 border border-yellow-500/30 rounded-md">
+                                        <p class="text-yellow-300 text-sm">
+                                            <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                            </svg>
+                                            No hay proyectos con saldo pendiente disponibles para registrar pagos.
+                                        </p>
+                                    </div>
+                                @endif
+                                
                                 <!-- Información del proyecto seleccionado -->
                                 <div id="proyecto-info" class="mt-3 p-3 bg-blue-600/10 border border-blue-500/30 rounded-md {{ !$proyectoSeleccionado ? 'hidden' : '' }}">
+                                    <div id="proyecto-usuario-info" class="mb-3 text-sm {{ !$proyectoSeleccionado || !$proyectoSeleccionado->user ? 'hidden' : '' }}">
+                                        <span class="text-gray-300">Usuario asignado:</span>
+                                        <span id="proyecto-usuario" class="text-white font-medium">
+                                            @if($proyectoSeleccionado && $proyectoSeleccionado->user)
+                                                {{ $proyectoSeleccionado->user->name }}
+                                            @endif
+                                        </span>
+                                    </div>
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                         <div>
                                             <span class="text-gray-300">Total del proyecto:</span>
@@ -168,6 +193,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const proyectoSelect = document.getElementById('proyecto_id');
             const proyectoInfo = document.getElementById('proyecto-info');
+            const proyectoUsuarioInfo = document.getElementById('proyecto-usuario-info');
+            const proyectoUsuario = document.getElementById('proyecto-usuario');
             const proyectoTotal = document.getElementById('proyecto-total');
             const proyectoPagado = document.getElementById('proyecto-pagado');
             const proyectoPendiente = document.getElementById('proyecto-pendiente');
@@ -182,9 +209,19 @@
                     const total = parseFloat(selectedOption.dataset.total);
                     const pagado = parseFloat(selectedOption.dataset.pagado);
                     const pendiente = parseFloat(selectedOption.dataset.pendiente);
+                    const usuario = selectedOption.dataset.usuario;
 
                     // Validar que los valores sean números válidos
                     if (!isNaN(total) && !isNaN(pagado) && !isNaN(pendiente)) {
+                        // Actualizar información del usuario
+                        if (usuario && usuario !== 'Sin asignar') {
+                            proyectoUsuario.textContent = usuario;
+                            proyectoUsuarioInfo.classList.remove('hidden');
+                        } else {
+                            proyectoUsuarioInfo.classList.add('hidden');
+                        }
+
+                        // Actualizar información financiera
                         proyectoTotal.textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         proyectoPagado.textContent = '$' + pagado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         proyectoPendiente.textContent = '$' + pendiente.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -217,6 +254,7 @@
 
             function resetProyectoInfo() {
                 proyectoInfo.classList.add('hidden');
+                proyectoUsuarioInfo.classList.add('hidden');
                 btnSaldoCompleto.disabled = true;
                 btnMitadSaldo.disabled = true;
                 btnSaldoCompleto.classList.add('opacity-50', 'cursor-not-allowed');
