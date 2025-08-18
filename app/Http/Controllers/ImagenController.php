@@ -67,6 +67,53 @@ class ImagenController extends Controller
     }
 
     /**
+     * Store image via AJAX from gallery modal
+     */
+    public function storeFromModal(Request $request, Proyecto $proyecto)
+    {
+        $request->validate([
+            'imagen' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // máximo 5MB
+            'tipo' => ['required', 'in:referencia,tattoo'],
+            'descripcion' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $archivo = $request->file('imagen');
+        $orden = $proyecto->imagenes()->max('orden') + 1;
+
+        // Generar nombre único para el archivo
+        $nombreArchivo = Str::uuid() . '.' . $archivo->getClientOriginalExtension();
+        
+        // Guardar en storage/app/public/proyectos/{proyecto_id}/{tipo}/
+        $rutaDirectorio = "proyectos/{$proyecto->id}/{$request->tipo}";
+        $rutaCompleta = $archivo->storeAs($rutaDirectorio, $nombreArchivo, 'public');
+
+        // Crear registro en la base de datos
+        $imagen = Imagen::create([
+            'proyecto_id' => $proyecto->id,
+            'ruta' => $rutaCompleta,
+            'tipo' => $request->tipo,
+            'nombre_original' => $archivo->getClientOriginalName(),
+            'descripcion' => $request->descripcion,
+            'orden' => $orden,
+            'tamaño_archivo' => $archivo->getSize(),
+            'tipo_mime' => $archivo->getMimeType(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Imagen subida exitosamente.',
+            'imagen' => [
+                'id' => $imagen->id,
+                'ruta' => $imagen->url,
+                'tipo' => $imagen->tipo,
+                'tipo_nombre' => $imagen->tipo_nombre,
+                'descripcion' => $imagen->descripcion,
+                'nombre_original' => $imagen->nombre_original,
+            ]
+        ]);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(Proyecto $proyecto, Imagen $imagen)

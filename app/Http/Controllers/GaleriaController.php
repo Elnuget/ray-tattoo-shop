@@ -69,12 +69,14 @@ class GaleriaController extends Controller
             'imagenes' => $imagenes->map(function($imagen) {
                 return [
                     'id' => $imagen->id,
-                    'ruta' => Storage::url($imagen->ruta),
+                    'ruta' => $imagen->url,
                     'tipo' => $imagen->tipo,
+                    'tipo_nombre' => $imagen->tipo_nombre,
                     'descripcion' => $imagen->descripcion,
                     'nombre_original' => $imagen->nombre_original,
                 ];
-            })
+            }),
+            'tipos' => \App\Models\Imagen::TIPOS
         ]);
     }
 }

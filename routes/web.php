@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('proyectos.imagenes', ImagenController::class)->except(['show']);
     Route::get('proyectos/{proyecto}/imagenes/{imagen}', [ImagenController::class, 'show'])->name('proyectos.imagenes.show');
     Route::post('proyectos/{proyecto}/imagenes/order', [ImagenController::class, 'updateOrder'])->name('proyectos.imagenes.order');
+    Route::post('proyectos/{proyecto}/imagenes/modal', [ImagenController::class, 'storeFromModal'])->name('proyectos.imagenes.modal');
     
     // Rutas para la galería general
     Route::get('galeria', [GaleriaController::class, 'index'])->name('galeria.index');
