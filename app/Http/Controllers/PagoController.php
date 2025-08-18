@@ -95,10 +95,25 @@ class PagoController extends Controller
 
         $metodos = Pago::METODOS;
 
-        // Si viene un proyecto_id específico, verificar que exista
+        // Buscar proyecto seleccionado con múltiples métodos
         $proyectoSeleccionado = null;
-        if ($request->has('proyecto_id')) {
-            $proyectoSeleccionado = Proyecto::with(['pagos', 'user'])->find($request->proyecto_id);
+        $proyectoId = null;
+
+        // 1. Primero revisar sesión
+        if (session('proyecto_seleccionado_pago')) {
+            $proyectoId = session('proyecto_seleccionado_pago');
+            session()->forget('proyecto_seleccionado_pago'); // Limpiar sesión
+        }
+        
+        // 2. Luego revisar parámetro URL
+        if (!$proyectoId && $request->has('proyecto_id')) {
+            $proyectoId = $request->proyecto_id;
+        }
+
+        // 3. Buscar el proyecto si tenemos un ID
+        if ($proyectoId) {
+            $proyectoSeleccionado = Proyecto::with(['pagos', 'user'])->find($proyectoId);
+            
             // Si el proyecto no está en la lista filtrada, agregarlo
             if ($proyectoSeleccionado && !$proyectos->contains('id', $proyectoSeleccionado->id)) {
                 $proyectos->push($proyectoSeleccionado);
@@ -106,6 +121,18 @@ class PagoController extends Controller
         }
 
         return view('pagos.create', compact('proyectos', 'metodos', 'proyectoSeleccionado'));
+    }
+
+    /**
+     * Create a new payment form specifically from a project.
+     */
+    public function createFromProject(Proyecto $proyecto): RedirectResponse
+    {
+        // Guardar el proyecto seleccionado en sesión
+        session(['proyecto_seleccionado_pago' => $proyecto->id]);
+        
+        // Redirigir a la ruta normal de create
+        return redirect()->route('pagos.create');
     }
 
     /**

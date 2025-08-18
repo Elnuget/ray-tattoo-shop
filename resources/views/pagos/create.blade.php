@@ -12,6 +12,21 @@
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            {{-- Debug info - remover en producción --}}
+            @if(app()->environment(['local', 'development']))
+                <div class="mb-4 p-3 bg-purple-600/20 border border-purple-500/30 rounded-lg backdrop-blur-sm">
+                    <p class="text-purple-300 text-sm">
+                        <strong>Debug:</strong>
+                        Proyecto en URL: {{ request('proyecto_id') ?? 'No' }} |
+                        Proyecto seleccionado: {{ $proyectoSeleccionado?->id ?? 'No' }} |
+                        Total proyectos: {{ $proyectos->count() }}
+                        @if($proyectoSeleccionado)
+                            | Cliente: {{ $proyectoSeleccionado->cliente }}
+                        @endif
+                    </p>
+                </div>
+            @endif
+            
             @if(isset($proyectoSeleccionado))
                 <div class="mb-4 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg backdrop-blur-sm">
                     <p class="text-blue-300">
@@ -52,14 +67,18 @@
                                 <select id="proyecto_id" name="proyecto_id" class="block mt-1 w-full bg-black/30 border-red-500/30 text-white focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm" required>
                                     <option value="">Seleccionar proyecto ({{ $proyectos->count() }} disponibles)</option>
                                     @foreach($proyectos as $proyecto)
+                                        @php
+                                            $isSelected = old('proyecto_id', $proyectoSeleccionado?->id ?? request('proyecto_id')) == $proyecto->id;
+                                        @endphp
                                         <option value="{{ $proyecto->id }}" 
-                                                {{ old('proyecto_id', $proyectoSeleccionado?->id ?? request('proyecto_id')) == $proyecto->id ? 'selected' : '' }}
+                                                {{ $isSelected ? 'selected' : '' }}
                                                 data-total="{{ $proyecto->total }}"
                                                 data-pagado="{{ $proyecto->total_pagado }}"
                                                 data-pendiente="{{ $proyecto->saldo_pendiente }}"
                                                 data-cliente="{{ $proyecto->cliente }}"
                                                 data-descripcion="{{ $proyecto->descripcion }}"
-                                                data-usuario="{{ $proyecto->user?->name ?? 'Sin asignar' }}">
+                                                data-usuario="{{ $proyecto->user?->name ?? 'Sin asignar' }}"
+                                                data-is-selected="{{ $isSelected ? 'true' : 'false' }}">
                                             {{ $proyecto->cliente }} - {{ $proyecto->descripcion }}
                                             @if($proyecto->user)
                                                 ({{ $proyecto->user->name }})
@@ -202,14 +221,25 @@
             const btnSaldoCompleto = document.getElementById('btn-saldo-completo');
             const btnMitadSaldo = document.getElementById('btn-mitad-saldo');
 
+            // Debug inicial
+            console.log('🔧 [Debug] Inicializando create de pagos');
+            console.log('🔧 [Debug] Proyecto select value:', proyectoSelect.value);
+            console.log('🔧 [Debug] Total opciones:', proyectoSelect.options.length);
+
             function updateProyectoInfo() {
                 const selectedOption = proyectoSelect.selectedOptions[0];
+                
+                console.log('🔧 [Debug] updateProyectoInfo llamado');
+                console.log('🔧 [Debug] Selected option:', selectedOption);
+                console.log('🔧 [Debug] Selected value:', selectedOption ? selectedOption.value : 'ninguno');
                 
                 if (selectedOption && selectedOption.value) {
                     const total = parseFloat(selectedOption.dataset.total);
                     const pagado = parseFloat(selectedOption.dataset.pagado);
                     const pendiente = parseFloat(selectedOption.dataset.pendiente);
                     const usuario = selectedOption.dataset.usuario;
+
+                    console.log('🔧 [Debug] Datos del proyecto:', { total, pagado, pendiente, usuario });
 
                     // Validar que los valores sean números válidos
                     if (!isNaN(total) && !isNaN(pagado) && !isNaN(pendiente)) {
@@ -243,16 +273,20 @@
                             montoInput.value = (pendiente / 2).toFixed(2);
                             montoInput.focus();
                         };
+
+                        console.log('✅ [Debug] Proyecto actualizado correctamente');
                     } else {
-                        console.error('Valores inválidos para el proyecto:', { total, pagado, pendiente });
+                        console.error('❌ [Debug] Valores inválidos para el proyecto:', { total, pagado, pendiente });
                         resetProyectoInfo();
                     }
                 } else {
+                    console.log('ℹ️ [Debug] Sin proyecto seleccionado');
                     resetProyectoInfo();
                 }
             }
 
             function resetProyectoInfo() {
+                console.log('🔄 [Debug] Reseteando info del proyecto');
                 proyectoInfo.classList.add('hidden');
                 proyectoUsuarioInfo.classList.add('hidden');
                 btnSaldoCompleto.disabled = true;
@@ -266,17 +300,73 @@
             proyectoSelect.addEventListener('change', updateProyectoInfo);
             
             // Inicializar inmediatamente al cargar la página
+            console.log('🚀 [Debug] Inicializando primera vez');
             updateProyectoInfo();
             
-            // También verificar después de un pequeño retraso para asegurar que todos los elementos están cargados
+            // También verificar después de múltiples delays para asegurar que todo se carga
             setTimeout(() => {
+                console.log('🕐 [Debug] Re-inicializando después de 100ms');
+                updateProyectoInfo();
+            }, 100);
+            
+            setTimeout(() => {
+                console.log('🕐 [Debug] Re-inicializando después de 500ms');
                 updateProyectoInfo();
                 
                 // Si hay un proyecto seleccionado, hacer scroll suave hacia la información del proyecto
                 if (proyectoSelect.value && !proyectoInfo.classList.contains('hidden')) {
                     proyectoInfo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    console.log('📍 [Debug] Scroll hacia proyecto info');
                 }
-            }, 200);
+            }, 500);
+            
+            // Validación adicional: forzar selección si hay solo un proyecto con valor específico
+            setTimeout(() => {
+                console.log('🔍 [Debug] Verificación final después de 1000ms');
+                console.log('🔍 [Debug] Valor actual del select:', proyectoSelect.value);
+                
+                // Si no hay nada seleccionado, buscar opciones marcadas como selected
+                if (!proyectoSelect.value && proyectoSelect.options.length > 1) {
+                    for (let i = 1; i < proyectoSelect.options.length; i++) { 
+                        const option = proyectoSelect.options[i];
+                        console.log('🔍 [Debug] Revisando opción:', option.value, 'selected attr:', option.selected, 'data-is-selected:', option.dataset.isSelected);
+                        
+                        if (option.selected || option.dataset.isSelected === 'true') {
+                            console.log('🎯 [Debug] Forzando selección de proyecto:', option.value);
+                            proyectoSelect.value = option.value;
+                            // Disparar evento change manualmente
+                            proyectoSelect.dispatchEvent(new Event('change'));
+                            break;
+                        }
+                    }
+                }
+                
+                // Si aún no hay selección, revisar storage y URL params como último recurso
+                if (!proyectoSelect.value) {
+                    // Revisar sessionStorage
+                    let proyectoIdFromStorage = sessionStorage.getItem('proyecto_seleccionado_pago');
+                    if (!proyectoIdFromStorage) {
+                        // Revisar localStorage
+                        proyectoIdFromStorage = localStorage.getItem('proyecto_seleccionado_pago');
+                    }
+                    
+                    // Revisar URL params
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const proyectoIdFromUrl = urlParams.get('proyecto_id');
+                    
+                    const proyectoIdFinal = proyectoIdFromStorage || proyectoIdFromUrl;
+                    
+                    if (proyectoIdFinal) {
+                        console.log('🌐 [Debug] Encontrado proyecto_id en storage/URL:', proyectoIdFinal);
+                        proyectoSelect.value = proyectoIdFinal;
+                        proyectoSelect.dispatchEvent(new Event('change'));
+                        
+                        // Limpiar storage después de usar
+                        sessionStorage.removeItem('proyecto_seleccionado_pago');
+                        localStorage.removeItem('proyecto_seleccionado_pago');
+                    }
+                }
+            }, 1000);
         });
     </script>
 </x-app-layout>

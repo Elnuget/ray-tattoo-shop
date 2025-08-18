@@ -74,6 +74,9 @@ Route::middleware('auth')->group(function () {
     // Rutas para el CRUD de pagos
     Route::resource('pagos', PagoController::class);
     
+    // Ruta específica para crear pago desde proyecto
+    Route::get('pagos/create-from-project/{proyecto}', [PagoController::class, 'createFromProject'])->name('pagos.create-from-project');
+    
     // Rutas para las imágenes de proyectos (nested routes)
     Route::resource('proyectos.imagenes', ImagenController::class)->except(['show']);
     Route::get('proyectos/{proyecto}/imagenes/{imagen}', [ImagenController::class, 'show'])->name('proyectos.imagenes.show');

@@ -193,14 +193,26 @@
                                                 @endif
                                                 
                                                 @if($proyecto->saldo_pendiente > 0)
-                                                    <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" 
+                                                    <!-- Enlace principal -->
+                                                    <a href="{{ route('pagos.create-from-project', $proyecto) }}" 
                                                        class="inline-flex items-center px-3 py-1 bg-cyan-600/20 text-cyan-300 rounded-md hover:bg-cyan-600/30 transition-colors duration-200 border border-cyan-500/30" 
                                                        title="Agregar pago para este proyecto"
                                                        data-proyecto-id="{{ $proyecto->id }}"
                                                        data-cliente="{{ $proyecto->cliente }}"
-                                                       data-saldo="{{ $proyecto->saldo_pendiente }}">
-                                                        Pago
+                                                       data-saldo="{{ $proyecto->saldo_pendiente }}"
+                                                       onclick="navegarAPago({{ $proyecto->id }}); return true;">
+                                                        💰 Pagar
                                                     </a>
+                                                    
+                                                    <!-- Alternativa con formulario POST (comentado por ahora) -->
+                                                    <!--
+                                                    <form action="{{ route('pagos.create-from-project', $proyecto) }}" method="GET" class="inline-block">
+                                                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-cyan-600/20 text-cyan-300 rounded-md hover:bg-cyan-600/30 transition-colors duration-200 border border-cyan-500/30" 
+                                                                title="Agregar pago para este proyecto">
+                                                            💰 Pagar (Form)
+                                                        </button>
+                                                    </form>
+                                                    -->
                                                 @endif
                                                 
                                                 @if(auth()->user()->es_admin || $proyecto->user_id === auth()->id())
@@ -771,5 +783,21 @@
                 cerrarGaleriaModal();
             }
         });
+        
+        // Función para navegar a crear pago con proyecto específico
+        function navegarAPago(proyectoId) {
+            console.log('🚀 [Debug] Navegando a pago para proyecto:', proyectoId);
+            
+            // Guardar en sessionStorage como backup
+            sessionStorage.setItem('proyecto_seleccionado_pago', proyectoId);
+            
+            // También intentar con localStorage
+            localStorage.setItem('proyecto_seleccionado_pago', proyectoId);
+            
+            console.log('💾 [Debug] Guardado en storage:', proyectoId);
+            
+            // Continuar con la navegación normal (return true en onclick permite que el enlace funcione)
+            return true;
+        }
     </script>
 </x-app-layout>
