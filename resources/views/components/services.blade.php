@@ -5,7 +5,7 @@
         <div class="row pb-3">
             @include('components.service-card', [
                 'title' => 'TATTOO',
-                'icon' => 'images/tattoo.png',
+                'icon' => 'images/coverup.png',
                 'description' => '¡Ten estilo en ROTO Tattoo Studio! Nuestros artistas experimentados trabajarán contigo para crear una pieza única que refleje tu personalidad y estilo.',
                 'animation' => 'fade-right'
             ])
