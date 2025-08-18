@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Imagen;
 use App\Models\Proyecto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class GaleriaController extends Controller
 {
@@ -49,5 +50,31 @@ class GaleriaController extends Controller
     public function show(Imagen $imagen)
     {
         return view('galeria.show', compact('imagen'));
+    }
+
+    /**
+     * Obtener las imágenes de un proyecto para mostrar en modal
+     */
+    public function imagenesProyecto(Proyecto $proyecto)
+    {
+        $imagenes = $proyecto->imagenes()->ordenado()->get();
+        
+        return response()->json([
+            'success' => true,
+            'proyecto' => [
+                'id' => $proyecto->id,
+                'cliente' => $proyecto->cliente,
+                'descripcion' => $proyecto->descripcion
+            ],
+            'imagenes' => $imagenes->map(function($imagen) {
+                return [
+                    'id' => $imagen->id,
+                    'ruta' => Storage::url($imagen->ruta),
+                    'tipo' => $imagen->tipo,
+                    'descripcion' => $imagen->descripcion,
+                    'nombre_original' => $imagen->nombre_original,
+                ];
+            })
+        ]);
     }
 }

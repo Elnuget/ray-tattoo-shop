@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     // Rutas para la galería general
     Route::get('galeria', [GaleriaController::class, 'index'])->name('galeria.index');
     Route::get('galeria/{imagen}', [GaleriaController::class, 'show'])->name('galeria.show');
+    Route::get('proyectos/{proyecto}/galeria', [GaleriaController::class, 'imagenesProyecto'])->name('proyectos.galeria');
 });
 
 require __DIR__.'/auth.php';

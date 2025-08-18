@@ -128,6 +128,11 @@
                                                     Ver
                                                 </a>
                                                 
+                                                <!-- Botón Galería -->
+                                                <button onclick="abrirGaleriaModal({{ $proyecto->id }})" class="inline-flex items-center px-3 py-1 bg-purple-600/20 text-purple-300 rounded-md hover:bg-purple-600/30 transition-colors duration-200 border border-purple-500/30" title="Ver galería del proyecto">
+                                                    Galería
+                                                </button>
+                                                
                                                 @if(auth()->user()->es_admin || $proyecto->user_id === auth()->id())
                                                     <a href="{{ route('proyectos.edit', $proyecto) }}" class="inline-flex items-center px-3 py-1 bg-yellow-600/20 text-yellow-300 rounded-md hover:bg-yellow-600/30 transition-colors duration-200 border border-yellow-500/30">
                                                         Editar
@@ -181,7 +186,7 @@
                                                 @endif
                                                 
                                                 @if($proyecto->saldo_pendiente > 0)
-                                                    <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" class="inline-flex items-center px-3 py-1 bg-purple-600/20 text-purple-300 rounded-md hover:bg-purple-600/30 transition-colors duration-200 border border-purple-500/30" title="Agregar pago para este proyecto">
+                                                    <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" class="inline-flex items-center px-3 py-1 bg-cyan-600/20 text-cyan-300 rounded-md hover:bg-cyan-600/30 transition-colors duration-200 border border-cyan-500/30" title="Agregar pago para este proyecto">
                                                         Pago
                                                     </a>
                                                 @endif
@@ -222,6 +227,48 @@
                             {{ $proyectos->links() }}
                         </div>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para la galería -->
+    <div id="galeriaModal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm hidden z-50 p-4" style="align-items: center; justify-content: center;">
+        <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/40 backdrop-blur-sm max-w-6xl max-h-[90vh] w-full overflow-hidden">
+            <!-- Header del modal -->
+            <div class="p-6 border-b border-red-500/20">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-semibold text-white" id="modalTitulo">Galería del Proyecto</h3>
+                        <p class="text-gray-300 text-sm" id="modalSubtitulo">Cliente: <span id="modalCliente"></span></p>
+                    </div>
+                    <button onclick="cerrarGaleriaModal()" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenido del modal -->
+            <div class="p-6 overflow-y-auto max-h-[70vh]">
+                <div id="galeriaContenido" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Las imágenes se cargarán aquí dinámicamente -->
+                </div>
+                
+                <!-- Mensaje cuando no hay imágenes -->
+                <div id="sinImagenes" class="text-center py-12 hidden">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <p class="text-gray-400 text-lg">No hay imágenes para este proyecto</p>
+                    <p class="text-gray-500 text-sm mt-2">Las imágenes aparecerán aquí cuando se suban al proyecto</p>
+                </div>
+                
+                <!-- Loading spinner -->
+                <div id="loadingSpinner" class="text-center py-12 hidden">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+                    <p class="text-gray-400 mt-2">Cargando imágenes...</p>
                 </div>
             </div>
         </div>
@@ -296,4 +343,119 @@
         });
     </script>
     @endif
+
+    <!-- JavaScript para el modal de galería -->
+    <script>
+        let galeriaModalActual = null;
+        
+        async function abrirGaleriaModal(proyectoId) {
+            const modal = document.getElementById('galeriaModal');
+            const contenido = document.getElementById('galeriaContenido');
+            const sinImagenes = document.getElementById('sinImagenes');
+            const loading = document.getElementById('loadingSpinner');
+            const modalCliente = document.getElementById('modalCliente');
+            
+            // Mostrar modal y loading
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            loading.classList.remove('hidden');
+            contenido.innerHTML = '';
+            sinImagenes.classList.add('hidden');
+            
+            try {
+                const response = await fetch(`/proyectos/${proyectoId}/galeria`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Actualizar información del proyecto
+                    modalCliente.textContent = data.proyecto.cliente;
+                    
+                    // Ocultar loading
+                    loading.classList.add('hidden');
+                    
+                    if (data.imagenes && data.imagenes.length > 0) {
+                        // Mostrar imágenes
+                        contenido.innerHTML = data.imagenes.map(imagen => `
+                            <div class="relative group overflow-hidden rounded-lg border border-red-500/20 bg-black/20">
+                                <img src="${imagen.ruta}" 
+                                     alt="${imagen.descripcion || imagen.nombre_original}" 
+                                     class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                                     onclick="verImagenCompleta('${imagen.ruta}', '${imagen.descripcion || imagen.nombre_original}')">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                    <p class="text-white text-sm font-medium">${imagen.tipo}</p>
+                                    ${imagen.descripcion ? `<p class="text-gray-300 text-xs mt-1">${imagen.descripcion}</p>` : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        // Mostrar mensaje de sin imágenes
+                        sinImagenes.classList.remove('hidden');
+                    }
+                } else {
+                    throw new Error('Error al cargar las imágenes');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loading.classList.add('hidden');
+                contenido.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-red-400 text-lg">Error al cargar las imágenes</p>
+                        <p class="text-gray-500 text-sm mt-2">Por favor, inténtalo de nuevo más tarde</p>
+                    </div>
+                `;
+            }
+            
+            galeriaModalActual = proyectoId;
+        }
+        
+        function cerrarGaleriaModal() {
+            const modal = document.getElementById('galeriaModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            galeriaModalActual = null;
+        }
+        
+        function verImagenCompleta(rutaImagen, descripcion) {
+            // Crear un modal temporal para ver la imagen en tamaño completo
+            const modalCompleto = document.createElement('div');
+            modalCompleto.className = 'fixed inset-0 bg-black bg-opacity-90 z-[60] p-4';
+            modalCompleto.style.display = 'flex';
+            modalCompleto.style.alignItems = 'center';
+            modalCompleto.style.justifyContent = 'center';
+            modalCompleto.onclick = () => modalCompleto.remove();
+            
+            modalCompleto.innerHTML = `
+                <div class="max-w-full max-h-full relative">
+                    <img src="${rutaImagen}" alt="${descripcion}" class="max-w-full max-h-full object-contain">
+                    <button onclick="event.stopPropagation(); this.parentElement.parentElement.remove()" 
+                            class="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    ${descripcion ? `<div class="absolute bottom-4 left-4 right-4 text-center"><p class="text-white bg-black/50 rounded px-3 py-2">${descripcion}</p></div>` : ''}
+                </div>
+            `;
+            
+            document.body.appendChild(modalCompleto);
+        }
+        
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && galeriaModalActual !== null) {
+                cerrarGaleriaModal();
+            }
+        });
+        
+        // Cerrar modal al hacer clic fuera del contenido
+        document.getElementById('galeriaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarGaleriaModal();
+            }
+        });
+    </script>
 </x-app-layout>
