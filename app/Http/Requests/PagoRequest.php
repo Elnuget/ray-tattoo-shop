@@ -33,7 +33,7 @@ class PagoRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $proyecto = Proyecto::with('pagos')->find($this->proyecto_id);
                     if ($proyecto) {
-                        $saldoPendiente = $proyecto->saldo_real;
+                        $saldoPendiente = $proyecto->saldo_pendiente;
                         
                         // Si estamos editando, sumar el monto actual del pago
                         if ($this->route('pago')) {
