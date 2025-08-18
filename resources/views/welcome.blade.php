@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="{{ asset('style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/preloader.css') }}">
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/gallery-filter.css') }}">
     
     <!-- FontAwesome -->
     <script src="https://kit.fontawesome.com/c26cd2166c.js" crossorigin="anonymous"></script>
@@ -92,6 +93,9 @@
     
     <!-- JavaScript responsivo -->
     <script src="{{ asset('js/responsive.js') }}"></script>
+    
+    <!-- JavaScript para filtros de galería -->
+    <script src="{{ asset('js/gallery-filter.js') }}"></script>
     
     <!-- Inicialización de scripts -->
     <script>

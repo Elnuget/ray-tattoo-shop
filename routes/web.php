@@ -16,7 +16,21 @@ Route::get('/', function () {
         ->orderBy('created_at', 'desc')
         ->get();
     
-    return view('welcome', compact('artists'));
+    // Obtener imágenes de tatuajes con sus usuarios y proyectos
+    $imagenesTattoo = \App\Models\Imagen::with(['proyecto.user'])
+        ->where('tipo', 'tattoo')
+        ->whereHas('proyecto.user', function($query) {
+            $query->where('visible', true);
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    // Obtener todos los usuarios (visibles y no visibles) para el filtro
+    $todosUsuarios = User::whereHas('proyectos.imagenes', function($query) {
+        $query->where('tipo', 'tattoo');
+    })->orderBy('name')->get();
+    
+    return view('welcome', compact('artists', 'imagenesTattoo', 'todosUsuarios'));
 });
 
 Route::get('/dashboard', function () {
