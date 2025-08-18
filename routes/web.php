@@ -34,7 +34,25 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = auth()->user();
+    
+    // Obtener los últimos 5 proyectos del usuario
+    $ultimosProyectos = $user->proyectos()
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
+    
+    // Estadísticas del usuario
+    $totalProyectos = $user->proyectos()->count();
+    $proyectosActivos = $user->proyectos()->activos()->count();
+    $proyectosCompletados = $user->proyectos()->estado('completado')->count();
+    
+    return view('dashboard', compact(
+        'ultimosProyectos', 
+        'totalProyectos', 
+        'proyectosActivos', 
+        'proyectosCompletados'
+    ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
