@@ -45,6 +45,7 @@
                         <table class="min-w-full" id="proyectosTable">
                             <thead>
                                 <tr class="border-b border-red-500/20">
+                                    <th class="hidden">ID</th> <!-- Columna oculta para el ID del proyecto -->
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Usuario</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Descripción</th>
@@ -55,8 +56,14 @@
                             <tbody class="divide-y divide-red-500/20" id="proyectosTableBody">
                                 @forelse($proyectos as $proyecto)
                                     <tr class="hover:bg-black/30 transition-colors duration-200 proyecto-row" 
+                                        data-proyecto-id="{{ $proyecto->id }}"
                                         data-user-id="{{ $proyecto->user_id ?? 'sin_asignar' }}"
-                                        data-user-name="{{ $proyecto->user ? strtolower($proyecto->user->name) : 'sin asignar' }}">
+                                        data-user-name="{{ $proyecto->user ? strtolower($proyecto->user->name) : 'sin asignar' }}"
+                                        data-cliente="{{ $proyecto->cliente }}"
+                                        data-descripcion="{{ $proyecto->descripcion }}"
+                                        data-total="{{ $proyecto->total }}"
+                                        data-saldo="{{ $proyecto->saldo_pendiente }}">
+                                        <td class="hidden">{{ $proyecto->id }}</td> <!-- Columna oculta con el ID del proyecto -->
                                         <td class="px-4 py-4 whitespace-nowrap text-sm text-white font-medium">
                                             {{ $proyecto->cliente }}
                                         </td>
@@ -85,13 +92,13 @@
                                                 <!-- Total y Saldo -->
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs text-gray-400 min-w-[50px]">Total:</span>
-                                                    <span class="text-white font-medium">${{ number_format($proyecto->total, 2) }}</span>
+                                                    <span class="text-white font-medium">${{ number_format((float)$proyecto->total, 2) }}</span>
                                                 </div>
                                                 
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs text-gray-400 min-w-[50px]">Saldo:</span>
                                                     @php
-                                                        $saldo = $proyecto->saldo_pendiente;
+                                                        $saldo = (float)$proyecto->saldo_pendiente;
                                                     @endphp
                                                     <span class="font-medium
                                                         @if($saldo > 0) text-red-300
@@ -118,7 +125,7 @@
                                                 <!-- Fecha de Inicio -->
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs text-gray-400 min-w-[50px]">Inicio:</span>
-                                                    <span class="text-gray-300">{{ $proyecto->fecha_inicio ? $proyecto->fecha_inicio->format('d/m/Y') : 'No definida' }}</span>
+                                                    <span class="text-gray-300">{{ $proyecto->fecha_inicio ? \Carbon\Carbon::parse($proyecto->fecha_inicio)->format('d/m/Y') : 'No definida' }}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -186,7 +193,12 @@
                                                 @endif
                                                 
                                                 @if($proyecto->saldo_pendiente > 0)
-                                                    <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" class="inline-flex items-center px-3 py-1 bg-cyan-600/20 text-cyan-300 rounded-md hover:bg-cyan-600/30 transition-colors duration-200 border border-cyan-500/30" title="Agregar pago para este proyecto">
+                                                    <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" 
+                                                       class="inline-flex items-center px-3 py-1 bg-cyan-600/20 text-cyan-300 rounded-md hover:bg-cyan-600/30 transition-colors duration-200 border border-cyan-500/30" 
+                                                       title="Agregar pago para este proyecto"
+                                                       data-proyecto-id="{{ $proyecto->id }}"
+                                                       data-cliente="{{ $proyecto->cliente }}"
+                                                       data-saldo="{{ $proyecto->saldo_pendiente }}">
                                                         Pago
                                                     </a>
                                                 @endif
