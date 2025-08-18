@@ -41,7 +41,7 @@
         <script src="{{ asset('script.js') }}"></script>
     @endif
     
-    <title>Rotto Tattoo Studio</title>
+    <title>ROTO Tattoo Studio</title>
 </head>
 <body class="loading">  
     <!-- Preloader -->

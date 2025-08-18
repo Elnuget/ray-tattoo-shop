@@ -1,4 +1,4 @@
-// Rotto Tattoo Studio - Responsive JavaScript Enhancements
+// ROTO Tattoo Studio - Responsive JavaScript Enhancements
 
 document.addEventListener('DOMContentLoaded', function() {
     

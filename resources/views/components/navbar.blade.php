@@ -2,7 +2,7 @@
 <nav id="navBar" class="navbar navbar-expand-lg sticky-top text-uppercase" data-aos="fade-up">
     <div class="container">
         <a class="navbar-brand fw-bold" href="#" style="line-height: 0.9; display: flex; flex-direction: column; align-items: flex-start;">
-            <span style="font-size: 1.1rem; letter-spacing: 1px;">ROTTO</span>
+            <span style="font-size: 1.1rem; letter-spacing: 1px;">ROTO</span>
             <span style="font-size: 0.8rem; letter-spacing: 0.5px;">TATTOO STUDIO</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" 

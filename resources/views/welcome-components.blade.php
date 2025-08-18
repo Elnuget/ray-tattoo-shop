@@ -1,6 +1,6 @@
 @extends('layouts.welcome')
 
-@section('title', 'Rotto Tattoo Studio')
+@section('title', 'ROTO Tattoo Studio')
 
 @section('body-class', 'loading')
 

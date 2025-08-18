@@ -1,5 +1,5 @@
 /**
- * Configuración personalizada de Tailwind CSS v4.0 para Rotto Tattoo Studio
+ * Configuración personalizada de Tailwind CSS v4.0 para ROTO Tattoo Studio
  * 
  * Este archivo contiene configuraciones adicionales y utilidades personalizadas
  * para optimizar el uso de Tailwind CSS en el proyecto.
@@ -9,7 +9,7 @@
 export const customConfig = {
   // Configuraciones específicas del proyecto
   project: {
-    name: 'Rotto Tattoo Studio',
+    name: 'ROTO Tattoo Studio',
     version: '1.0.0',
     tailwindVersion: '4.0.0'
   },

@@ -64,7 +64,7 @@
                                 allowfullscreen="" 
                                 loading="lazy" 
                                 referrerpolicy="no-referrer-when-downgrade"
-                                title="Ubicación de Rotto Tattoo Studio - Pinar Bajo"></iframe>
+                                title="Ubicación de ROTO Tattoo Studio - Pinar Bajo"></iframe>
                     </div>
                 </div>
             </div>

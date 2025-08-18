@@ -1,4 +1,4 @@
-# ✅ Lista de Verificación - Rotto Tattoo Studio
+# ✅ Lista de Verificación - ROTO Tattoo Studio
 
 ## Archivos Principales ✅
 

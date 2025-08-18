@@ -10,7 +10,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
         <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
 
-        <title>{{ config('app.name', 'Rotto Tattoo Studio') }}</title>
+        <title>{{ config('app.name', 'ROTO Tattoo Studio') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

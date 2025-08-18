@@ -10,7 +10,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
         <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
 
-        <title>{{ config('app.name', 'Rotto Tattoo Studio') }}</title>
+        <title>{{ config('app.name', 'ROTO Tattoo Studio') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -36,7 +36,7 @@
                             </svg>
                         </div>
                         <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white">
-                            Rotto Tattoo Studio
+                            ROTO Tattoo Studio
                         </h1>
                         <p class="text-gray-300 mt-2 font-medium">Arte en tu piel</p>
                     </a>
@@ -51,7 +51,7 @@
 
                 <!-- Footer -->
                 <div class="mt-8 text-center text-gray-400 text-sm">
-                    <p>&copy; {{ date('Y') }} Rotto Tattoo Studio. Todos los derechos reservados.</p>
+                    <p>&copy; {{ date('Y') }} ROTO Tattoo Studio. Todos los derechos reservados.</p>
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Rotto Tattoo Studio'),
+    'name' => env('APP_NAME', 'ROTO Tattoo Studio'),
 
     /*
     |--------------------------------------------------------------------------

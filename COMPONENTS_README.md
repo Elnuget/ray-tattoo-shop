@@ -1,4 +1,4 @@
-# Componentes de Rotto Tattoo Studio
+# Componentes de ROTO Tattoo Studio
 
 Este proyecto ha sido separado en componentes reutilizables para mejorar la organización y mantenibilidad del código.
 

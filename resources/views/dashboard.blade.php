@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white leading-tight">
-            {{ __('Dashboard - Rotto Tattoo Studio') }}
+            {{ __('Dashboard - ROTO Tattoo Studio') }}
         </h2>
     </x-slot>
 
@@ -16,7 +16,7 @@
                                 ¡Bienvenido, {{ Auth::user()->name }}! 🎨
                             </h1>
                             <p class="text-gray-300">
-                                Panel de control de Rotto Tattoo Studio
+                                Panel de control de ROTO Tattoo Studio
                             </p>
                         </div>
                         <div class="w-20 h-20 bg-gradient-to-r from-red-600 to-black rounded-full flex items-center justify-center shadow-xl shadow-red-500/30 border border-red-500/30">

@@ -3,7 +3,7 @@
     <div class="container py-5">
         <div class="row py-5 align-items-center">
             <div class="col-lg-5 col-md-6 py-5 me-auto order-2 order-md-1" data-aos="fade-right">
-                <h3 id="blacklinetext">ROTTO<br><small>Tattoo Studio</small></h3>
+                <h3 id="blacklinetext">ROTO<br><small>Tattoo Studio</small></h3>
                 <h6 class="pt-3">Tattoo & piercing</h6>
                 <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
                     <a href="#section2" class="btn-custom">

@@ -40,7 +40,7 @@
         <script src="{{ asset('script.js') }}"></script>
     @endif
     
-    <title>@yield('title', 'Rotto Tattoo Studio')</title>
+    <title>@yield('title', 'ROTO Tattoo Studio')</title>
     @yield('extra-css')
 </head>
 <body class="@yield('body-class', '')">

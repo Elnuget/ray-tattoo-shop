@@ -1,4 +1,4 @@
-# 🎨 Tailwind CSS v4.0 - Rotto Tattoo Studio
+# 🎨 Tailwind CSS v4.0 - ROTO Tattoo Studio
 
 ## ✅ Configuración Completada
 
@@ -148,4 +148,4 @@ npm run dev -- --force
 
 **¡Tu configuración de Tailwind CSS v4.0 está completa y lista para usar!** 🚀
 
-Creado por GitHub Copilot para Rotto Tattoo Studio ✨
+Creado por GitHub Copilot para ROTO Tattoo Studio ✨
