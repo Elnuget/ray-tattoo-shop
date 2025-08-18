@@ -41,7 +41,7 @@
         <script src="{{ asset('script.js') }}"></script>
     @endif
     
-    <title>ROTO Tattoo Studio</title>
+    <title>ROTO Tattoo Studio - Tatuajes Profesionales en Quito, Ecuador</title>
 </head>
 <body class="loading">  
     <!-- Preloader -->
@@ -171,6 +171,7 @@
 
     <!-- Estilos para el botón flotante de WhatsApp -->
     <style>
+        /* Estilos base para WhatsApp */
         .whatsapp-float {
             position: fixed;
             width: 60px;
@@ -208,42 +209,45 @@
             margin: 0;
         }
 
-        /* Barra flotante de redes sociales */
+        /* Barra flotante de redes sociales - OPTIMIZADA */
         .social-sidebar {
             position: fixed;
-            left: 20px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 1000;
+            z-index: 999;
+            max-width: 50px;
         }
 
         .social-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            width: 100%;
         }
 
         .social-button {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             color: white;
             text-align: center;
-            font-size: 20px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            font-size: 18px;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
             position: relative;
+            flex-shrink: 0;
         }
 
         .social-button:hover {
             color: white;
             text-decoration: none;
-            box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.3);
-            transform: scale(1.1);
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
         }
 
         .social-button i {
@@ -291,53 +295,219 @@
             background-color: #218838;
         }
 
-        /* Responsive */
+        /* MEJORAS RESPONSIVAS PARA MÓVILES - OPTIMIZADAS */
+        
+        /* Tablet - 768px y menor */
         @media (max-width: 768px) {
+            /* Ocultar redes sociales en tablet para evitar interferencias */
             .social-sidebar {
-                left: 15px;
-                top: auto;
-                bottom: 100px;
-                transform: none;
+                display: none;
             }
 
-            .social-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 8px;
-                max-width: 120px;
+            /* Asegurar que las imágenes no se desborden */
+            .carousel-inner img {
+                max-height: 300px;
+                object-fit: cover;
             }
 
-            .social-button {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
+            /* Mejorar texto del hero en tablet */
+            #blacklinetext {
+                font-size: 2.5rem !important;
+            }
+
+            #blacklinetext small {
+                font-size: 1.2rem !important;
+            }
+
+            /* Evitar scroll horizontal */
+            body, html {
+                overflow-x: hidden;
+                max-width: 100vw;
             }
         }
 
+        /* Móvil - 576px y menor */
         @media (max-width: 576px) {
+            /* Ocultar completamente las redes sociales en móvil */
+            .social-sidebar {
+                display: none !important;
+            }
+
+            /* WhatsApp optimizado para móvil */
             .whatsapp-float {
-                bottom: 15px;
-                right: 15px;
-                width: 50px;
-                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+                z-index: 1001;
             }
             
             .whatsapp-button {
-                width: 50px;
-                height: 50px;
-                font-size: 24px;
+                width: 55px;
+                height: 55px;
+                font-size: 26px;
             }
 
+            /* Hero section más legible en móvil */
+            #blacklinetext {
+                font-size: 2rem !important;
+                line-height: 1.1 !important;
+                text-align: center;
+            }
+
+            #blacklinetext small {
+                font-size: 1rem !important;
+            }
+
+            .main .container {
+                padding: 1rem !important;
+            }
+
+            /* Botones del hero más accesibles */
+            .d-flex.gap-3 {
+                flex-direction: column !important;
+                align-items: center;
+                gap: 1rem !important;
+            }
+
+            .btn-custom {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .bt1, .bt2 {
+                width: 100% !important;
+                padding: 12px 20px !important;
+                font-size: 1rem !important;
+            }
+
+            /* Carrusel optimizado para móvil */
+            .carousel-inner img {
+                max-height: 250px;
+                object-fit: cover;
+                border-radius: 10px;
+            }
+
+            /* Navbar brand más pequeño */
+            .navbar-brand {
+                font-size: 0.9rem !important;
+            }
+
+            .navbar-brand span:first-child {
+                font-size: 1rem !important;
+            }
+
+            .navbar-brand span:last-child {
+                font-size: 0.7rem !important;
+            }
+
+            /* Enlaces del navbar más accesibles */
+            .navbar-nav .nav-link {
+                padding: 0.75rem 1rem !important;
+                text-align: center;
+                font-size: 0.95rem;
+            }
+
+            /* Secciones con mejor padding */
+            section {
+                padding: 2rem 0 !important;
+            }
+
+            .py-5 {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+
+            /* Títulos más legibles */
+            h3 {
+                font-size: 1.5rem !important;
+            }
+
+            h6 {
+                font-size: 1rem !important;
+            }
+
+            /* Cards responsivas */
+            .card {
+                margin-bottom: 1rem !important;
+            }
+
+            /* Formularios más accesibles */
+            .form-control {
+                font-size: 16px !important; /* Evita zoom en iOS */
+                padding: 0.75rem !important;
+            }
+
+            .btn {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 1rem !important;
+            }
+
+            /* Accordion más legible */
+            .accordion-button {
+                font-size: 0.95rem !important;
+                padding: 1rem !important;
+            }
+
+            .accordion-body {
+                font-size: 0.9rem !important;
+                line-height: 1.5 !important;
+            }
+
+            /* Evitar overflow horizontal */
+            body, html {
+                overflow-x: hidden !important;
+                max-width: 100vw !important;
+            }
+
+            .container, .container-fluid {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+
+        /* Solo mostrar redes sociales en desktop grande */
+        @media (min-width: 992px) {
             .social-sidebar {
-                left: 10px;
-                bottom: 80px;
+                display: block;
+                left: 20px;
             }
 
             .social-button {
-                width: 35px;
-                height: 35px;
-                font-size: 14px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
             }
+        }
+
+        /* Extra large screens */
+        @media (min-width: 1200px) {
+            .social-sidebar {
+                left: 30px;
+            }
+        }
+
+        /* Asegurar que todo el contenido sea visible */
+        body {
+            overflow-x: hidden !important;
+            position: relative;
+        }
+
+        .container-fluid {
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Prevenir problemas de layout */
+        * {
+            box-sizing: border-box;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </body>
