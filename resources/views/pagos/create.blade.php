@@ -12,44 +12,6 @@
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            {{-- Debug info - remover en producción --}}
-            @if(app()->environment(['local', 'development']))
-                <div class="mb-4 p-3 bg-purple-600/20 border border-purple-500/30 rounded-lg backdrop-blur-sm">
-                    <p class="text-purple-300 text-sm">
-                        <strong>Debug:</strong>
-                        Proyecto en URL: {{ request('proyecto_id') ?? 'No' }} |
-                        Proyecto seleccionado: {{ $proyectoSeleccionado?->id ?? 'No' }} |
-                        Total proyectos: {{ $proyectos->count() }}
-                        @if($proyectoSeleccionado)
-                            | Cliente: {{ $proyectoSeleccionado->cliente }}
-                        @endif
-                    </p>
-                </div>
-            @endif
-            
-            @if(isset($proyectoSeleccionado))
-                <div class="mb-4 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg backdrop-blur-sm">
-                    <p class="text-blue-300">
-                        <span class="font-medium">Proyecto seleccionado:</span> 
-                        {{ $proyectoSeleccionado->cliente }} - {{ $proyectoSeleccionado->descripcion }}
-                    </p>
-                    <div class="text-sm text-gray-400 mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <div>
-                            <span class="text-gray-500">Total:</span>
-                            <span class="text-white">${{ number_format($proyectoSeleccionado->total, 2) }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Pagado:</span>
-                            <span class="text-blue-300">${{ number_format($proyectoSeleccionado->total_pagado, 2) }}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Saldo:</span>
-                            <span class="text-red-300 font-medium">${{ number_format($proyectoSeleccionado->saldo_pendiente, 2) }}</span>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            
             <div class="glass rounded-2xl shadow-2xl border border-red-500/20 bg-black/20 backdrop-blur-sm overflow-hidden">
                 <div class="p-8">
                     <form method="POST" action="{{ route('pagos.store') }}" class="space-y-8">
@@ -59,6 +21,48 @@
                             <!-- Información del Pago -->
                             <div class="md:col-span-2">
                                 <h3 class="text-lg font-semibold text-white mb-4 border-b border-red-500/20 pb-2">Información del Pago</h3>
+                            </div>
+
+                            <!-- Acciones Rápidas - PRIMERO -->
+                            <div class="md:col-span-2">
+                                <x-input-label :value="__('💰 Acciones Rápidas')" class="text-white text-lg font-medium" />
+                                <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    <!-- Pago por sesión -->
+                                    <button type="button" id="btn-pago-sesion" class="px-4 py-3 bg-green-600/20 text-green-300 rounded-lg hover:bg-green-600/30 transition-colors duration-200 border border-green-500/30 text-sm font-medium opacity-50 cursor-not-allowed" disabled>
+                                        <div class="text-center">
+                                            <div class="text-lg">📅</div>
+                                            <div>Pagar Sesión</div>
+                                            <div id="precio-sesion" class="text-xs text-green-200">$0.00</div>
+                                        </div>
+                                    </button>
+                                    
+                                    <!-- 50% del saldo -->
+                                    <button type="button" id="btn-mitad-saldo" class="px-4 py-3 bg-blue-600/20 text-blue-300 rounded-lg hover:bg-blue-600/30 transition-colors duration-200 border border-blue-500/30 text-sm font-medium {{ !$proyectoSeleccionado ? 'opacity-50 cursor-not-allowed' : '' }}" {{ !$proyectoSeleccionado ? 'disabled' : '' }}>
+                                        <div class="text-center">
+                                            <div class="text-lg">📊</div>
+                                            <div>50% Saldo</div>
+                                            <div class="text-xs text-blue-200">Parcial</div>
+                                        </div>
+                                    </button>
+                                    
+                                    <!-- Saldo completo -->
+                                    <button type="button" id="btn-saldo-completo" class="px-4 py-3 bg-purple-600/20 text-purple-300 rounded-lg hover:bg-purple-600/30 transition-colors duration-200 border border-purple-500/30 text-sm font-medium {{ !$proyectoSeleccionado ? 'opacity-50 cursor-not-allowed' : '' }}" {{ !$proyectoSeleccionado ? 'disabled' : '' }}>
+                                        <div class="text-center">
+                                            <div class="text-lg">💯</div>
+                                            <div>Saldo Total</div>
+                                            <div class="text-xs text-purple-200">Completo</div>
+                                        </div>
+                                    </button>
+                                    
+                                    <!-- Monto personalizado -->
+                                    <button type="button" id="btn-monto-custom" class="px-4 py-3 bg-gray-600/20 text-gray-300 rounded-lg hover:bg-gray-600/30 transition-colors duration-200 border border-gray-500/30 text-sm font-medium">
+                                        <div class="text-center">
+                                            <div class="text-lg">✏️</div>
+                                            <div>Personalizado</div>
+                                            <div class="text-xs text-gray-200">Manual</div>
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Proyecto -->
@@ -78,6 +82,8 @@
                                                 data-cliente="{{ $proyecto->cliente }}"
                                                 data-descripcion="{{ $proyecto->descripcion }}"
                                                 data-usuario="{{ $proyecto->user?->name ?? 'Sin asignar' }}"
+                                                data-sesiones="{{ $proyecto->sesiones }}"
+                                                data-precio-sesion="{{ $proyecto->precio_por_sesion ?? 0 }}"
                                                 data-is-selected="{{ $isSelected ? 'true' : 'false' }}">
                                             {{ $proyecto->cliente }} - {{ $proyecto->descripcion }}
                                             @if($proyecto->user)
@@ -85,7 +91,8 @@
                                             @else
                                                 (Sin asignar)
                                             @endif
-                                            - Total: ${{ number_format((float)$proyecto->total, 2) }}, Saldo: ${{ number_format((float)$proyecto->saldo_pendiente, 2) }}
+                                            - {{ $proyecto->sesiones }} sesiones @ ${{ number_format((float)($proyecto->precio_por_sesion ?? 0), 2) }}
+                                            - Saldo: ${{ number_format((float)$proyecto->saldo_pendiente, 2) }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -112,31 +119,51 @@
                                             @endif
                                         </span>
                                     </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                        <div>
-                                            <span class="text-gray-300">Total del proyecto:</span>
+                                    
+                                    <!-- Información de sesiones -->
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
+                                        <div class="bg-black/20 p-2 rounded-md">
+                                            <span class="text-gray-300 block text-xs">Sesiones</span>
+                                            <span id="proyecto-sesiones" class="text-white font-medium">
+                                                @if($proyectoSeleccionado)
+                                                    {{ $proyectoSeleccionado->sesiones }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div class="bg-black/20 p-2 rounded-md">
+                                            <span class="text-gray-300 block text-xs">Por sesión</span>
+                                            <span id="proyecto-precio-sesion" class="text-green-300 font-medium">
+                                                @if($proyectoSeleccionado)
+                                                    ${{ number_format((float)($proyectoSeleccionado->precio_por_sesion ?? 0), 2) }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div class="bg-black/20 p-2 rounded-md">
+                                            <span class="text-gray-300 block text-xs">Total proyecto</span>
                                             <span id="proyecto-total" class="text-white font-medium">
                                                 @if($proyectoSeleccionado)
                                                     ${{ number_format((float)$proyectoSeleccionado->total, 2) }}
                                                 @endif
                                             </span>
                                         </div>
-                                        <div>
-                                            <span class="text-gray-300">Total pagado:</span>
-                                            <span id="proyecto-pagado" class="text-blue-300 font-medium">
-                                                @if($proyectoSeleccionado)
-                                                    ${{ number_format((float)$proyectoSeleccionado->total_pagado, 2) }}
-                                                @endif
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-300">Saldo pendiente:</span>
+                                        <div class="bg-black/20 p-2 rounded-md">
+                                            <span class="text-gray-300 block text-xs">Saldo pendiente</span>
                                             <span id="proyecto-pendiente" class="text-red-300 font-medium">
                                                 @if($proyectoSeleccionado)
                                                     ${{ number_format((float)$proyectoSeleccionado->saldo_pendiente, 2) }}
                                                 @endif
                                             </span>
                                         </div>
+                                    </div>
+                                    
+                                    <!-- Información de pagos realizados -->
+                                    <div class="text-sm">
+                                        <span class="text-gray-300">Total pagado:</span>
+                                        <span id="proyecto-pagado" class="text-blue-300 font-medium">
+                                            @if($proyectoSeleccionado)
+                                                ${{ number_format((float)$proyectoSeleccionado->total_pagado, 2) }}
+                                            @endif
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -171,19 +198,6 @@
                                 <x-input-error :messages="$errors->get('fecha_pago')" class="mt-2" />
                             </div>
 
-                            <!-- Botones de acción rápida para el monto -->
-                            <div>
-                                <x-input-label :value="__('Acciones Rápidas')" class="text-white" />
-                                <div class="mt-1 flex space-x-2">
-                                    <button type="button" id="btn-saldo-completo" class="px-3 py-1 bg-green-600/20 text-green-300 rounded-md hover:bg-green-600/30 transition-colors duration-200 border border-green-500/30 text-sm {{ !$proyectoSeleccionado ? 'opacity-50 cursor-not-allowed' : '' }}" {{ !$proyectoSeleccionado ? 'disabled' : '' }}>
-                                        Saldo Completo
-                                    </button>
-                                    <button type="button" id="btn-mitad-saldo" class="px-3 py-1 bg-blue-600/20 text-blue-300 rounded-md hover:bg-blue-600/30 transition-colors duration-200 border border-blue-500/30 text-sm {{ !$proyectoSeleccionado ? 'opacity-50 cursor-not-allowed' : '' }}" {{ !$proyectoSeleccionado ? 'disabled' : '' }}>
-                                        50% del Saldo
-                                    </button>
-                                </div>
-                            </div>
-
                             <!-- Descripción -->
                             <div class="md:col-span-2">
                                 <x-input-label for="descripcion" :value="__('Descripción (Opcional)')" class="text-white" />
@@ -214,12 +228,23 @@
             const proyectoInfo = document.getElementById('proyecto-info');
             const proyectoUsuarioInfo = document.getElementById('proyecto-usuario-info');
             const proyectoUsuario = document.getElementById('proyecto-usuario');
+            
+            // Elementos de información del proyecto
+            const proyectoSesiones = document.getElementById('proyecto-sesiones');
+            const proyectoPrecioSesion = document.getElementById('proyecto-precio-sesion');
             const proyectoTotal = document.getElementById('proyecto-total');
             const proyectoPagado = document.getElementById('proyecto-pagado');
             const proyectoPendiente = document.getElementById('proyecto-pendiente');
+            
+            // Input de monto
             const montoInput = document.getElementById('monto');
-            const btnSaldoCompleto = document.getElementById('btn-saldo-completo');
+            
+            // Botones de acción rápida (nuevos)
+            const btnPagoSesion = document.getElementById('btn-pago-sesion');
             const btnMitadSaldo = document.getElementById('btn-mitad-saldo');
+            const btnSaldoCompleto = document.getElementById('btn-saldo-completo');
+            const btnMontoCustom = document.getElementById('btn-monto-custom');
+            const precioSesionSpan = document.getElementById('precio-sesion');
 
             // Debug inicial
             console.log('🔧 [Debug] Inicializando create de pagos');
@@ -238,8 +263,10 @@
                     const pagado = parseFloat(selectedOption.dataset.pagado);
                     const pendiente = parseFloat(selectedOption.dataset.pendiente);
                     const usuario = selectedOption.dataset.usuario;
+                    const sesiones = parseInt(selectedOption.dataset.sesiones) || 0;
+                    const precioSesion = parseFloat(selectedOption.dataset.precioSesion) || 0;
 
-                    console.log('🔧 [Debug] Datos del proyecto:', { total, pagado, pendiente, usuario });
+                    console.log('🔧 [Debug] Datos del proyecto:', { total, pagado, pendiente, usuario, sesiones, precioSesion });
 
                     // Validar que los valores sean números válidos
                     if (!isNaN(total) && !isNaN(pagado) && !isNaN(pendiente)) {
@@ -251,27 +278,50 @@
                             proyectoUsuarioInfo.classList.add('hidden');
                         }
 
-                        // Actualizar información financiera
+                        // Actualizar información del proyecto
+                        proyectoSesiones.textContent = sesiones;
+                        proyectoPrecioSesion.textContent = '$' + precioSesion.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         proyectoTotal.textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         proyectoPagado.textContent = '$' + pagado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         proyectoPendiente.textContent = '$' + pendiente.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         
+                        // Mostrar información del proyecto
                         proyectoInfo.classList.remove('hidden');
                         
-                        // Habilitar botones y quitar clases de deshabilitado
-                        btnSaldoCompleto.disabled = false;
+                        // Configurar botón de pago por sesión
+                        if (precioSesion > 0) {
+                            precioSesionSpan.textContent = '$' + precioSesion.toFixed(2);
+                            btnPagoSesion.disabled = false;
+                            btnPagoSesion.classList.remove('opacity-50', 'cursor-not-allowed');
+                            btnPagoSesion.onclick = () => {
+                                montoInput.value = precioSesion.toFixed(2);
+                                montoInput.focus();
+                            };
+                        } else {
+                            precioSesionSpan.textContent = 'N/A';
+                            btnPagoSesion.disabled = true;
+                            btnPagoSesion.classList.add('opacity-50', 'cursor-not-allowed');
+                            btnPagoSesion.onclick = null;
+                        }
+                        
+                        // Habilitar otros botones
                         btnMitadSaldo.disabled = false;
-                        btnSaldoCompleto.classList.remove('opacity-50', 'cursor-not-allowed');
+                        btnSaldoCompleto.disabled = false;
                         btnMitadSaldo.classList.remove('opacity-50', 'cursor-not-allowed');
+                        btnSaldoCompleto.classList.remove('opacity-50', 'cursor-not-allowed');
 
-                        // Habilitar botones de acción rápida
+                        // Configurar acciones de botones
+                        btnMitadSaldo.onclick = () => {
+                            montoInput.value = (pendiente / 2).toFixed(2);
+                            montoInput.focus();
+                        };
                         btnSaldoCompleto.onclick = () => {
                             montoInput.value = pendiente.toFixed(2);
                             montoInput.focus();
                         };
-                        btnMitadSaldo.onclick = () => {
-                            montoInput.value = (pendiente / 2).toFixed(2);
+                        btnMontoCustom.onclick = () => {
                             montoInput.focus();
+                            montoInput.select();
                         };
 
                         console.log('✅ [Debug] Proyecto actualizado correctamente');
@@ -289,12 +339,24 @@
                 console.log('🔄 [Debug] Reseteando info del proyecto');
                 proyectoInfo.classList.add('hidden');
                 proyectoUsuarioInfo.classList.add('hidden');
-                btnSaldoCompleto.disabled = true;
+                
+                // Deshabilitar todos los botones
+                btnPagoSesion.disabled = true;
                 btnMitadSaldo.disabled = true;
-                btnSaldoCompleto.classList.add('opacity-50', 'cursor-not-allowed');
+                btnSaldoCompleto.disabled = true;
+                
+                // Agregar clases de deshabilitado
+                btnPagoSesion.classList.add('opacity-50', 'cursor-not-allowed');
                 btnMitadSaldo.classList.add('opacity-50', 'cursor-not-allowed');
-                btnSaldoCompleto.onclick = null;
+                btnSaldoCompleto.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                // Limpiar eventos
+                btnPagoSesion.onclick = null;
                 btnMitadSaldo.onclick = null;
+                btnSaldoCompleto.onclick = null;
+                
+                // Limpiar precio de sesión
+                precioSesionSpan.textContent = '$0.00';
             }
 
             proyectoSelect.addEventListener('change', updateProyectoInfo);
