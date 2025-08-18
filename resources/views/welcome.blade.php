@@ -74,6 +74,61 @@
     <!-- Footer -->
     @include('components.footer')
 
+    <!-- Botón flotante de WhatsApp -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/593995901750?text=Hola,%20me%20interesa%20información%20sobre%20sus%20servicios%20de%20tatuajes" 
+           target="_blank" 
+           class="whatsapp-button"
+           title="Contactar por WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Barra flotante de redes sociales -->
+    <div class="social-sidebar">
+        <div class="social-container">
+            <!-- Agendar Cita -->
+            <a href="https://form.jotform.com/242916656121658" 
+               target="_blank" 
+               class="social-button calendar-btn"
+               title="Agendar una Cita">
+                <i class="fas fa-calendar-plus"></i>
+            </a>
+            
+            <!-- TikTok -->
+            <a href="https://www.tiktok.com/@roto.tattoostudio" 
+               target="_blank" 
+               class="social-button tiktok-btn"
+               title="Síguenos en TikTok">
+                <i class="fab fa-tiktok"></i>
+            </a>
+            
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/roto_tattoostudio" 
+               target="_blank" 
+               class="social-button instagram-btn"
+               title="Síguenos en Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/profile.php?id=61553582873221&mibextid=LQQJ4d" 
+               target="_blank" 
+               class="social-button facebook-btn"
+               title="Síguenos en Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            
+            <!-- Guía de Precios -->
+            <a href="https://drive.google.com/file/d/1AVMF8jtFP996OUcjEoSFIWxRVlzugcqy/view?usp=drivesdk" 
+               target="_blank" 
+               class="social-button price-btn"
+               title="Ver Guía de Precios">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </a>
+        </div>
+    </div>
+
     <!-- Scripts al final del body para mejor rendimiento -->
     
     <!-- AOS JavaScript -->
@@ -113,6 +168,178 @@
             offset: -475,
         });
     </script>
+
+    <!-- Estilos para el botón flotante de WhatsApp -->
+    <style>
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #25D366;
+            color: white;
+            text-align: center;
+            font-size: 28px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #1ebe57;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        .whatsapp-button i {
+            margin: 0;
+        }
+
+        /* Barra flotante de redes sociales */
+        .social-sidebar {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+
+        .social-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .social-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .social-button:hover {
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        .social-button i {
+            margin: 0;
+        }
+
+        /* Colores específicos para cada botón */
+        .calendar-btn {
+            background-color: #FF6B35;
+        }
+
+        .calendar-btn:hover {
+            background-color: #E55A2B;
+        }
+
+        .tiktok-btn {
+            background-color: #000000;
+        }
+
+        .tiktok-btn:hover {
+            background-color: #333333;
+        }
+
+        .instagram-btn {
+            background: linear-gradient(45deg, #F56040, #C13584, #833AB4);
+        }
+
+        .instagram-btn:hover {
+            background: linear-gradient(45deg, #E55A2B, #A8296B, #6A2C91);
+        }
+
+        .facebook-btn {
+            background-color: #1877F2;
+        }
+
+        .facebook-btn:hover {
+            background-color: #166FE5;
+        }
+
+        .price-btn {
+            background-color: #28A745;
+        }
+
+        .price-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .social-sidebar {
+                left: 15px;
+                top: auto;
+                bottom: 100px;
+                transform: none;
+            }
+
+            .social-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+                max-width: 120px;
+            }
+
+            .social-button {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .whatsapp-float {
+                bottom: 15px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .whatsapp-button {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .social-sidebar {
+                left: 10px;
+                bottom: 80px;
+            }
+
+            .social-button {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </body>
 </body>
 </html>
