@@ -123,28 +123,79 @@
                                             </div>
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <a href="{{ route('proyectos.show', $proyecto) }}" class="inline-flex items-center px-3 py-1 bg-blue-600/20 text-blue-300 rounded-md hover:bg-blue-600/30 transition-colors duration-200 border border-blue-500/30">
-                                                Ver
-                                            </a>
-                                            @if(auth()->user()->es_admin || $proyecto->user_id === auth()->id())
-                                                <a href="{{ route('proyectos.edit', $proyecto) }}" class="inline-flex items-center px-3 py-1 bg-yellow-600/20 text-yellow-300 rounded-md hover:bg-yellow-600/30 transition-colors duration-200 border border-yellow-500/30">
-                                                    Editar
+                                            <div class="flex flex-wrap gap-2">
+                                                <a href="{{ route('proyectos.show', $proyecto) }}" class="inline-flex items-center px-3 py-1 bg-blue-600/20 text-blue-300 rounded-md hover:bg-blue-600/30 transition-colors duration-200 border border-blue-500/30">
+                                                    Ver
                                                 </a>
-                                            @endif
-                                            @if($proyecto->saldo_pendiente > 0)
-                                                <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" class="inline-flex items-center px-3 py-1 bg-green-600/20 text-green-300 rounded-md hover:bg-green-600/30 transition-colors duration-200 border border-green-500/30" title="Agregar pago para este proyecto">
-                                                    Pago
-                                                </a>
-                                            @endif
-                                            @if(auth()->user()->es_admin || $proyecto->user_id === auth()->id())
-                                                <form action="{{ route('proyectos.destroy', $proyecto) }}" method="POST" class="inline-block" onsubmit="return confirm('¿Estás seguro de eliminar este proyecto?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-600/20 text-red-300 rounded-md hover:bg-red-600/30 transition-colors duration-200 border border-red-500/30">
-                                                        Eliminar
-                                                    </button>
-                                                </form>
-                                            @endif
+                                                
+                                                @if(auth()->user()->es_admin || $proyecto->user_id === auth()->id())
+                                                    <a href="{{ route('proyectos.edit', $proyecto) }}" class="inline-flex items-center px-3 py-1 bg-yellow-600/20 text-yellow-300 rounded-md hover:bg-yellow-600/30 transition-colors duration-200 border border-yellow-500/30">
+                                                        Editar
+                                                    </a>
+                                                    
+                                                    <!-- Botones de cambio de estado -->
+                                                    @if($proyecto->estado === 'pendiente')
+                                                        <form action="{{ route('proyectos.cambiar-estado', $proyecto) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="estado" value="en_progreso">
+                                                            <button type="submit" class="inline-flex items-center px-3 py-1 bg-green-600/20 text-green-300 rounded-md hover:bg-green-600/30 transition-colors duration-200 border border-green-500/30" title="Iniciar proyecto">
+                                                                Iniciar
+                                                            </button>
+                                                        </form>
+                                                    @elseif($proyecto->estado === 'en_progreso')
+                                                        <form action="{{ route('proyectos.cambiar-estado', $proyecto) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="estado" value="completado">
+                                                            <button type="submit" class="inline-flex items-center px-3 py-1 bg-green-600/20 text-green-300 rounded-md hover:bg-green-600/30 transition-colors duration-200 border border-green-500/30" title="Marcar como completado">
+                                                                Completar
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('proyectos.cambiar-estado', $proyecto) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="estado" value="pausado">
+                                                            <button type="submit" class="inline-flex items-center px-3 py-1 bg-orange-600/20 text-orange-300 rounded-md hover:bg-orange-600/30 transition-colors duration-200 border border-orange-500/30" title="Pausar proyecto">
+                                                                Pausar
+                                                            </button>
+                                                        </form>
+                                                    @elseif($proyecto->estado === 'pausado')
+                                                        <form action="{{ route('proyectos.cambiar-estado', $proyecto) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="estado" value="en_progreso">
+                                                            <button type="submit" class="inline-flex items-center px-3 py-1 bg-blue-600/20 text-blue-300 rounded-md hover:bg-blue-600/30 transition-colors duration-200 border border-blue-500/30" title="Reanudar proyecto">
+                                                                Reanudar
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('proyectos.cambiar-estado', $proyecto) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <input type="hidden" name="estado" value="cancelado">
+                                                            <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-600/20 text-red-300 rounded-md hover:bg-red-600/30 transition-colors duration-200 border border-red-500/30" title="Cancelar proyecto" onclick="return confirm('¿Estás seguro de cancelar este proyecto?')">
+                                                                Cancelar
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @endif
+                                                
+                                                @if($proyecto->saldo_pendiente > 0)
+                                                    <a href="{{ route('pagos.create', ['proyecto_id' => $proyecto->id]) }}" class="inline-flex items-center px-3 py-1 bg-purple-600/20 text-purple-300 rounded-md hover:bg-purple-600/30 transition-colors duration-200 border border-purple-500/30" title="Agregar pago para este proyecto">
+                                                        Pago
+                                                    </a>
+                                                @endif
+                                                
+                                                @if(auth()->user()->es_admin || $proyecto->user_id === auth()->id())
+                                                    <form action="{{ route('proyectos.destroy', $proyecto) }}" method="POST" class="inline-block" onsubmit="return confirm('¿Estás seguro de eliminar este proyecto?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-600/20 text-red-300 rounded-md hover:bg-red-600/30 transition-colors duration-200 border border-red-500/30">
+                                                            Eliminar
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

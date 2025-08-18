@@ -36,6 +36,9 @@ Route::middleware('auth')->group(function () {
     // Rutas para el CRUD de proyectos
     Route::resource('proyectos', ProyectoController::class);
     
+    // Ruta para cambiar estado de proyectos
+    Route::patch('proyectos/{proyecto}/cambiar-estado', [ProyectoController::class, 'cambiarEstado'])->name('proyectos.cambiar-estado');
+    
     // Rutas para el CRUD de pagos
     Route::resource('pagos', PagoController::class);
     

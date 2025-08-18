@@ -193,4 +193,35 @@ class ProyectoController extends Controller
         $proyecto->delete();
         return redirect()->route('proyectos.index')->with('success', 'Proyecto eliminado exitosamente.');
     }
+
+    /**
+     * Cambiar el estado del proyecto
+     */
+    public function cambiarEstado(Request $request, Proyecto $proyecto)
+    {
+        // Verificar permisos: admin puede cambiar todos, usuarios solo los suyos
+        if (!auth()->user()->es_admin && $proyecto->user_id !== auth()->id()) {
+            abort(403, 'No tienes permisos para cambiar el estado de este proyecto.');
+        }
+
+        $request->validate([
+            'estado' => ['required', 'in:pendiente,en_progreso,pausado,completado,cancelado'],
+        ]);
+
+        $estadoAnterior = $proyecto->estado;
+        $proyecto->update(['estado' => $request->estado]);
+
+        // Mapear nombres legibles de estados
+        $estadosNombres = [
+            'pendiente' => 'Pendiente',
+            'en_progreso' => 'En Progreso',
+            'pausado' => 'Pausado',
+            'completado' => 'Completado',
+            'cancelado' => 'Cancelado'
+        ];
+
+        $mensaje = "Estado del proyecto cambiado de '{$estadosNombres[$estadoAnterior]}' a '{$estadosNombres[$request->estado]}'.";
+
+        return redirect()->route('proyectos.index')->with('success', $mensaje);
+    }
 }
