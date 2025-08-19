@@ -1,0 +1,55 @@
+/* FontAwesome Fallback CSS */
+/* Este archivo proporciona iconos de respaldo usando emojis y símbolos Unicode */
+
+.fab, .fas, .far, .fal, .fad, .fat {
+    font-family: inherit;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    text-rendering: auto;
+    display: inline-block;
+}
+
+/* Iconos específicos con fallbacks Unicode */
+.fab.fa-whatsapp:before { content: "📱"; font-size: 0.8em; }
+.fas.fa-calendar-plus:before { content: "📅"; }
+.fab.fa-tiktok:before { content: "🎵"; }
+.fab.fa-instagram:before { content: "📷"; }
+.fab.fa-facebook-f:before { content: "📘"; }
+.fas.fa-file-invoice-dollar:before { content: "💰"; }
+.fas.fa-heart:before { content: "❤️"; }
+.fas.fa-phone:before { content: "📞"; }
+.fas.fa-envelope:before { content: "✉️"; }
+.fas.fa-map-marker-alt:before { content: "📍"; }
+.fas.fa-clock:before { content: "⏰"; }
+.fas.fa-star:before { content: "⭐"; }
+.fas.fa-check:before { content: "✓"; }
+.fas.fa-times:before { content: "✗"; }
+.fas.fa-arrow-left:before { content: "←"; }
+.fas.fa-arrow-right:before { content: "→"; }
+.fas.fa-arrow-up:before { content: "↑"; }
+.fas.fa-arrow-down:before { content: "↓"; }
+.fas.fa-home:before { content: "🏠"; }
+.fas.fa-user:before { content: "👤"; }
+.fas.fa-users:before { content: "👥"; }
+.fas.fa-cog:before { content: "⚙️"; }
+.fas.fa-search:before { content: "🔍"; }
+.fas.fa-bars:before { content: "☰"; }
+.fas.fa-close:before, .fas.fa-times:before { content: "✕"; }
+
+/* Estilos para mejorar la apariencia de los fallbacks */
+.social-button .fab,
+.social-button .fas,
+.whatsapp-button .fab {
+    font-size: 1.2em;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Animaciones simples para los iconos */
+.social-button:hover .fab,
+.social-button:hover .fas,
+.whatsapp-button:hover .fab {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}

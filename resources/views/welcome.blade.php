@@ -5,6 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- Política de seguridad de contenido más permisiva -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src 'self' https: data: blob:; font-src 'self' https: data:;">
+    
+    <!-- Headers de cache y recursos -->
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -29,9 +36,31 @@
     <link rel="stylesheet" href="{{ asset('css/preloader.css') }}">
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     <link rel="stylesheet" href="{{ asset('css/gallery-filter.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome-fallback.css') }}">
     
-    <!-- FontAwesome -->
-    <script src="https://kit.fontawesome.com/c26cd2166c.js" crossorigin="anonymous"></script>
+    <!-- FontAwesome CDN (más confiable) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Fallback para FontAwesome -->
+    <script>
+        // Verificar si FontAwesome se cargó correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            var testIcon = document.createElement('i');
+            testIcon.className = 'fas fa-heart';
+            testIcon.style.display = 'none';
+            document.body.appendChild(testIcon);
+            
+            var computedStyle = window.getComputedStyle(testIcon, ':before');
+            if (computedStyle.content === 'none' || computedStyle.content === '') {
+                // FontAwesome no se cargó, cargar fallback
+                var fallbackCSS = document.createElement('link');
+                fallbackCSS.rel = 'stylesheet';
+                fallbackCSS.href = 'https://use.fontawesome.com/releases/v6.4.0/css/all.css';
+                document.head.appendChild(fallbackCSS);
+            }
+            document.body.removeChild(testIcon);
+        });
+    </script>
     
     <!-- jQuery (debe ir antes de Bootstrap JS) -->
     <script src="https://code.jquery.com/jquery-3.6.2.slim.js" integrity="sha256-OflJKW8Z8amEUuCaflBZJ4GOg4+JnNh9JdVfoV+6biw=" crossorigin="anonymous"></script>
@@ -152,25 +181,152 @@
     <!-- JavaScript para filtros de galería -->
     <script src="{{ asset('js/gallery-filter.js') }}"></script>
     
+    <!-- Script para manejar carga de recursos -->
+    <script src="{{ asset('js/resource-loader.js') }}"></script>
+    
     <!-- Inicialización de scripts -->
     <script>
         // Script del preloader - remover la clase loading y el preloader después de la animación
         setTimeout(function() {
             document.body.classList.remove('loading');
-            document.getElementById('deleted').style.display = 'none';
+            var preloader = document.getElementById('deleted');
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
         }, 4500);
 
-        // Inicialización de AOS
-        AOS.init({
-            delay: 0,
-            once: true,
-            duration: 400,
-            offset: -475,
+        // Verificar carga de recursos y mostrar debug info
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Verificando carga de recursos...');
+            
+            // Verificar FontAwesome
+            var faLoaded = false;
+            try {
+                var testIcon = document.createElement('i');
+                testIcon.className = 'fas fa-heart';
+                testIcon.style.position = 'absolute';
+                testIcon.style.left = '-9999px';
+                document.body.appendChild(testIcon);
+                
+                var computedStyle = window.getComputedStyle(testIcon, ':before');
+                faLoaded = computedStyle.content !== 'none' && computedStyle.content !== '';
+                document.body.removeChild(testIcon);
+            } catch(e) {
+                console.error('❌ Error verificando FontAwesome:', e);
+            }
+            
+            console.log(faLoaded ? '✅ FontAwesome cargado correctamente' : '❌ FontAwesome no se cargó');
+            
+            // Verificar Bootstrap
+            var bsLoaded = typeof window.bootstrap !== 'undefined';
+            console.log(bsLoaded ? '✅ Bootstrap cargado correctamente' : '❌ Bootstrap no se cargó');
+            
+            // Verificar AOS
+            var aosLoaded = typeof AOS !== 'undefined';
+            console.log(aosLoaded ? '✅ AOS cargado correctamente' : '❌ AOS no se cargó');
+            
+            // Si FontAwesome no se cargó, intentar cargar alternativo
+            if (!faLoaded) {
+                console.log('🔄 Intentando cargar FontAwesome alternativo...');
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://use.fontawesome.com/releases/v6.4.0/css/all.css';
+                link.onload = function() {
+                    console.log('✅ FontAwesome alternativo cargado');
+                };
+                link.onerror = function() {
+                    console.log('❌ Error cargando FontAwesome alternativo');
+                };
+                document.head.appendChild(link);
+            }
         });
+
+        // Inicialización de AOS
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                delay: 0,
+                once: true,
+                duration: 400,
+                offset: -475,
+            });
+        } else {
+            // Fallback si AOS no se carga
+            setTimeout(function() {
+                if (typeof AOS !== 'undefined') {
+                    AOS.init({
+                        delay: 0,
+                        once: true,
+                        duration: 400,
+                        offset: -475,
+                    });
+                }
+            }, 1000);
+        }
     </script>
 
     <!-- Estilos para el botón flotante de WhatsApp -->
     <style>
+        /* Fallback para iconos si FontAwesome no carga */
+        .icon-fallback {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            text-align: center;
+            line-height: 1;
+        }
+        
+        /* Fallback específico para cada icono */
+        .fab.fa-whatsapp:before { content: "📱"; }
+        .fas.fa-calendar-plus:before { content: "📅"; }
+        .fab.fa-tiktok:before { content: "🎵"; }
+        .fab.fa-instagram:before { content: "📷"; }
+        .fab.fa-facebook-f:before { content: "📘"; }
+        .fas.fa-file-invoice-dollar:before { content: "💰"; }
+        
+        /* Verificar si FontAwesome está cargado */
+        .fontawesome-test {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+            font-weight: 900;
+        }
+        
+        /* Estilos para elementos con errores de carga */
+        .image-error {
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-error:after {
+            content: "🖼️ Imagen no disponible";
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        /* Mejorar visibilidad de iconos sociales si hay problemas */
+        .social-button {
+            position: relative;
+        }
+        
+        .social-button:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: inherit;
+            opacity: 0.1;
+        }
+        
+        /* Asegurar que los botones sean clicables incluso sin iconos */
+        .social-button, .whatsapp-button {
+            min-width: 45px;
+            min-height: 45px;
+            text-decoration: none !important;
+            cursor: pointer;
+        }
+        
         /* Estilos base para WhatsApp */
         .whatsapp-float {
             position: fixed;
@@ -510,6 +666,5 @@
             height: auto;
         }
     </style>
-</body>
 </body>
 </html>
