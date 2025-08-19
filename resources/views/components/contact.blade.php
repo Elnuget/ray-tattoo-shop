@@ -40,7 +40,7 @@
                                 <div class="card-body text-center">
                                     <i class="fas fa-phone-alt fa-2x text-primary mb-2"></i>
                                     <h6 class="card-title">Teléfono</h6>
-                                    <p class="card-text">+593 99 590 1750</p>
+                                    <p class="card-text">+593 98 446 7160</p>
                                 </div>
                             </div>
                         </div>
