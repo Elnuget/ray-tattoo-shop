@@ -83,6 +83,10 @@ Route::middleware('auth')->group(function () {
     Route::post('proyectos/{proyecto}/imagenes/order', [ImagenController::class, 'updateOrder'])->name('proyectos.imagenes.order');
     Route::post('proyectos/{proyecto}/imagenes/modal', [ImagenController::class, 'storeFromModal'])->name('proyectos.imagenes.modal');
     
+    // Rutas directas para actualizar y eliminar imágenes por ID
+    Route::patch('proyectos/imagenes/{imagen}', [ImagenController::class, 'updateById'])->name('imagenes.update');
+    Route::delete('proyectos/imagenes/{imagen}', [ImagenController::class, 'destroyById'])->name('imagenes.destroy');
+    
     // Rutas para la galería general
     Route::get('galeria', [GaleriaController::class, 'index'])->name('galeria.index');
     Route::get('galeria/{imagen}', [GaleriaController::class, 'show'])->name('galeria.show');

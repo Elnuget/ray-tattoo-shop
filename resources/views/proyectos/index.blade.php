@@ -426,6 +426,88 @@
         </div>
     </div>
 
+    <!-- Modal para editar imagen -->
+    <div id="editarImagenModal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm hidden z-60 p-4" style="align-items: center; justify-content: center;">
+        <div class="glass rounded-2xl shadow-2xl border border-blue-500/20 bg-black/40 backdrop-blur-sm max-w-2xl w-full">
+            <!-- Header del modal -->
+            <div class="p-6 border-b border-blue-500/20">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-white">Editar Imagen</h3>
+                    <button onclick="cerrarEditarImagenModal()" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenido del modal -->
+            <div class="p-6">
+                <form id="formEditarImagen" class="space-y-4">
+                    <input type="hidden" id="editImagenId" name="imagen_id">
+                    
+                    <!-- Vista previa de la imagen actual -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Imagen Actual</label>
+                        <div class="relative w-32 h-32 mx-auto">
+                            <img id="previewImagenActual" src="" alt="Vista previa" 
+                                 class="w-full h-full object-cover rounded-lg border border-blue-500/30">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- Tipo de imagen -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Tipo</label>
+                            <select name="tipo" id="editSelectTipo" required
+                                    class="w-full bg-black/30 border border-blue-500/30 text-white rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="referencia">Imagen de Referencia</option>
+                                <option value="tattoo">Imagen del Tatuaje</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Descripción -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Descripción</label>
+                            <textarea name="descripcion" id="editTextareaDescripcion" rows="3" 
+                                      class="w-full bg-black/30 border border-blue-500/30 text-white rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                      placeholder="Descripción de la imagen..."></textarea>
+                        </div>
+                        
+                        <!-- Reemplazar imagen (opcional) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Reemplazar Imagen (opcional)
+                            </label>
+                            <input type="file" name="nueva_imagen" id="editInputImagen" accept="image/*"
+                                   class="w-full bg-black/30 border border-blue-500/30 text-white rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                            <p class="text-xs text-gray-400 mt-1">Deja vacío para mantener la imagen actual. JPG, PNG, GIF, WEBP. Máximo 5MB</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="flex justify-end gap-3 pt-4">
+                        <button type="button" onclick="cerrarEditarImagenModal()" 
+                                class="px-4 py-2 bg-gray-600/20 text-gray-300 rounded-lg hover:bg-gray-600/30 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="btnActualizarImagen"
+                                class="px-4 py-2 bg-blue-600/20 text-blue-300 rounded-lg hover:bg-blue-600/30 transition-colors border border-blue-500/30">
+                            <span class="btn-text">Actualizar Imagen</span>
+                            <span class="btn-loading hidden">
+                                <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-blue-300 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Actualizando...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @if(auth()->user()->es_admin && $usuarios->count() > 0)
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -589,7 +671,7 @@
                 const nombreArchivo = imagen.nombre_original && imagen.nombre_original !== 'null' ? imagen.nombre_original : 'imagen.jpg';
                 
                 return `
-                    <div class="relative overflow-hidden rounded-lg border border-red-500/20 bg-black/20 hover:border-red-500/40 transition-all duration-300">
+                    <div class="relative overflow-hidden rounded-lg border border-red-500/20 bg-black/20 hover:border-red-500/40 transition-all duration-300 group">
                         <!-- Imagen -->
                         <div class="aspect-square relative cursor-pointer" onclick="verImagenCompleta('${imagen.ruta}', '${descripcionTexto}', '${nombreArchivo}')">
                             <img src="${imagen.ruta}" 
@@ -604,11 +686,26 @@
                                 </span>
                             </div>
                             
-                            <!-- Botón ver completa -->
-                            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button class="bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors">
+                            <!-- Botones de acción -->
+                            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                                <!-- Botón ver completa -->
+                                <button class="bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors" title="Ver imagen completa">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </button>
+                                <!-- Botón editar -->
+                                <button onclick="event.stopPropagation(); editarImagen(${imagen.id}, '${imagen.tipo}', '${descripcionTexto.replace(/'/g, "\\'")}', '${nombreArchivo.replace(/'/g, "\\'")}')" 
+                                        class="bg-blue-600/70 text-white p-1 rounded-full hover:bg-blue-600/90 transition-colors" title="Editar imagen">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <!-- Botón eliminar -->
+                                <button onclick="event.stopPropagation(); eliminarImagen(${imagen.id}, '${nombreArchivo.replace(/'/g, "\\'")}')" 
+                                        class="bg-red-600/70 text-white p-1 rounded-full hover:bg-red-600/90 transition-colors" title="Eliminar imagen">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                     </svg>
                                 </button>
                             </div>
@@ -830,6 +927,177 @@
         document.getElementById('galeriaModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 cerrarGaleriaModal();
+            }
+        });
+        
+        // Función para editar imagen
+        function editarImagen(imagenId, tipo, descripcion, nombreArchivo) {
+            const modal = document.getElementById('editarImagenModal');
+            const form = document.getElementById('formEditarImagen');
+            const previewImg = document.getElementById('previewImagenActual');
+            
+            // Llenar formulario con datos actuales
+            document.getElementById('editImagenId').value = imagenId;
+            document.getElementById('editSelectTipo').value = tipo;
+            document.getElementById('editTextareaDescripcion').value = descripcion === 'Sin descripción' ? '' : descripcion;
+            
+            // Buscar la imagen en imagenesActuales para obtener la ruta
+            const imagen = imagenesActuales.find(img => img.id == imagenId);
+            if (imagen) {
+                previewImg.src = imagen.ruta;
+            }
+            
+            // Mostrar modal
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+        
+        function cerrarEditarImagenModal() {
+            const modal = document.getElementById('editarImagenModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            
+            // Limpiar formulario
+            document.getElementById('formEditarImagen').reset();
+        }
+        
+        // Manejar envío del formulario de edición
+        document.getElementById('formEditarImagen').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const imagenId = formData.get('imagen_id');
+            const btnActualizar = document.getElementById('btnActualizarImagen');
+            const btnText = btnActualizar.querySelector('.btn-text');
+            const btnLoading = btnActualizar.querySelector('.btn-loading');
+            
+            // Mostrar loading
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            btnActualizar.disabled = true;
+            
+            try {
+                const response = await fetch(`/proyectos/imagenes/${imagenId}`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-HTTP-Method-Override': 'PATCH'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Actualizar imagen en la lista actual
+                    const indiceImagen = imagenesActuales.findIndex(img => img.id == imagenId);
+                    if (indiceImagen !== -1) {
+                        imagenesActuales[indiceImagen] = data.imagen;
+                    }
+                    
+                    // Actualizar la vista según el filtro actual
+                    const filtroActual = document.getElementById('filtroTipo').value;
+                    let imagenesFiltradas;
+                    if (filtroActual === '') {
+                        imagenesFiltradas = imagenesActuales;
+                    } else {
+                        imagenesFiltradas = imagenesActuales.filter(img => img.tipo === filtroActual);
+                    }
+                    
+                    mostrarImagenes(imagenesFiltradas);
+                    actualizarContador(imagenesFiltradas);
+                    
+                    // Cerrar modal
+                    cerrarEditarImagenModal();
+                    
+                    // Mostrar mensaje de éxito
+                    mostrarNotificacion('Imagen actualizada exitosamente', 'success');
+                } else {
+                    throw new Error(data.message || 'Error al actualizar la imagen');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarNotificacion('Error al actualizar la imagen: ' + error.message, 'error');
+            } finally {
+                // Ocultar loading
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+                btnActualizar.disabled = false;
+            }
+        });
+        
+        // Función para eliminar imagen
+        function eliminarImagen(imagenId, nombreArchivo) {
+            if (!confirm(`¿Estás seguro de eliminar la imagen "${nombreArchivo}"?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+            
+            // Mostrar indicador de carga
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.classList.remove('hidden');
+            
+            fetch(`/proyectos/imagenes/${imagenId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remover imagen de la lista actual
+                    imagenesActuales = imagenesActuales.filter(img => img.id != imagenId);
+                    
+                    // Actualizar la vista según el filtro actual
+                    const filtroActual = document.getElementById('filtroTipo').value;
+                    let imagenesFiltradas;
+                    if (filtroActual === '') {
+                        imagenesFiltradas = imagenesActuales;
+                    } else {
+                        imagenesFiltradas = imagenesActuales.filter(img => img.tipo === filtroActual);
+                    }
+                    
+                    mostrarImagenes(imagenesFiltradas);
+                    actualizarContador(imagenesFiltradas);
+                    
+                    // Mostrar mensaje de éxito
+                    mostrarNotificacion('Imagen eliminada exitosamente', 'success');
+                    
+                    // Si no quedan imágenes, mostrar mensaje
+                    if (imagenesActuales.length === 0) {
+                        document.getElementById('sinImagenes').classList.remove('hidden');
+                        document.getElementById('contadorImagenes').textContent = '0 imágenes';
+                    }
+                } else {
+                    throw new Error(data.message || 'Error al eliminar la imagen');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('Error al eliminar la imagen: ' + error.message, 'error');
+            })
+            .finally(() => {
+                loadingSpinner.classList.add('hidden');
+            });
+        }
+        
+        // Cerrar modal de edición con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const editModal = document.getElementById('editarImagenModal');
+                if (!editModal.classList.contains('hidden')) {
+                    cerrarEditarImagenModal();
+                } else if (galeriaModalActual !== null) {
+                    cerrarGaleriaModal();
+                }
+            }
+        });
+        
+        // Cerrar modal de edición al hacer clic fuera del contenido
+        document.getElementById('editarImagenModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarEditarImagenModal();
             }
         });
         

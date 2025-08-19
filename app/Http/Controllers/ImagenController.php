@@ -197,4 +197,68 @@ class ImagenController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    /**
+     * Actualizar una imagen por ID (para AJAX)
+     */
+    public function updateById(Request $request, Imagen $imagen)
+    {
+        $request->validate([
+            'tipo' => ['required', 'in:referencia,tattoo'],
+            'descripcion' => ['nullable', 'string', 'max:500'],
+            'nueva_imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // máximo 5MB
+        ]);
+
+        $datosActualizar = $request->only(['tipo', 'descripcion']);
+
+        // Si se subió una nueva imagen, procesar el reemplazo
+        if ($request->hasFile('nueva_imagen')) {
+            $archivo = $request->file('nueva_imagen');
+            
+            // Eliminar imagen anterior
+            if (Storage::exists($imagen->ruta)) {
+                Storage::delete($imagen->ruta);
+            }
+            
+            // Generar nombre único para el nuevo archivo
+            $nombreArchivo = Str::uuid() . '.' . $archivo->getClientOriginalExtension();
+            
+            // Guardar en storage/app/public/proyectos/{proyecto_id}/{tipo}/
+            $rutaDirectorio = "proyectos/{$imagen->proyecto_id}/{$request->tipo}";
+            $rutaCompleta = $archivo->storeAs($rutaDirectorio, $nombreArchivo, 'public');
+            
+            $datosActualizar['ruta'] = $rutaCompleta;
+            $datosActualizar['nombre_original'] = $archivo->getClientOriginalName();
+            $datosActualizar['tamaño_archivo'] = $archivo->getSize();
+            $datosActualizar['tipo_mime'] = $archivo->getMimeType();
+        }
+
+        $imagen->update($datosActualizar);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Imagen actualizada exitosamente.',
+            'imagen' => [
+                'id' => $imagen->id,
+                'ruta' => $imagen->url,
+                'tipo' => $imagen->tipo,
+                'tipo_nombre' => $imagen->tipo_nombre,
+                'descripcion' => $imagen->descripcion,
+                'nombre_original' => $imagen->nombre_original,
+            ]
+        ]);
+    }
+
+    /**
+     * Eliminar una imagen por ID (para AJAX)
+     */
+    public function destroyById(Imagen $imagen)
+    {
+        $imagen->delete(); // El evento booted del modelo se encarga de eliminar el archivo físico
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Imagen eliminada exitosamente.'
+        ]);
+    }
 }
