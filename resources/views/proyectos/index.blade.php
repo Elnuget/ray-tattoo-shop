@@ -427,7 +427,7 @@
     </div>
 
     <!-- Modal para editar imagen -->
-    <div id="editarImagenModal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm hidden z-60 p-4" style="align-items: center; justify-content: center;">
+    <div id="editarImagenModal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm hidden z-[80] p-4" style="align-items: center; justify-content: center;">
         <div class="glass rounded-2xl shadow-2xl border border-blue-500/20 bg-black/40 backdrop-blur-sm max-w-2xl w-full">
             <!-- Header del modal -->
             <div class="p-6 border-b border-blue-500/20">
@@ -918,14 +918,23 @@
         
         // Cerrar modal con Escape
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && galeriaModalActual !== null) {
-                cerrarGaleriaModal();
+            if (e.key === 'Escape') {
+                const editModal = document.getElementById('editarImagenModal');
+                
+                // Primero verificar si el modal de edición está abierto
+                if (!editModal.classList.contains('hidden')) {
+                    cerrarEditarImagenModal();
+                } else if (galeriaModalActual !== null) {
+                    cerrarGaleriaModal();
+                }
             }
         });
         
         // Cerrar modal al hacer clic fuera del contenido
         document.getElementById('galeriaModal').addEventListener('click', function(e) {
-            if (e.target === this) {
+            // Solo cerrar si el modal de edición no está abierto
+            const editModal = document.getElementById('editarImagenModal');
+            if (e.target === this && editModal.classList.contains('hidden')) {
                 cerrarGaleriaModal();
             }
         });
@@ -1081,18 +1090,6 @@
                 loadingSpinner.classList.add('hidden');
             });
         }
-        
-        // Cerrar modal de edición con Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const editModal = document.getElementById('editarImagenModal');
-                if (!editModal.classList.contains('hidden')) {
-                    cerrarEditarImagenModal();
-                } else if (galeriaModalActual !== null) {
-                    cerrarGaleriaModal();
-                }
-            }
-        });
         
         // Cerrar modal de edición al hacer clic fuera del contenido
         document.getElementById('editarImagenModal').addEventListener('click', function(e) {
